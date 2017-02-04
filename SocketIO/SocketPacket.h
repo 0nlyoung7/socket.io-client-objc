@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(unsigned int, PacketType) {
+typedef NS_ENUM(NSInteger, PacketType) {
     Connect = 0,
     Disconnect = 1,
     Event =2,
@@ -10,13 +10,15 @@ typedef NS_ENUM(unsigned int, PacketType) {
     BinaryAck = 6
 };
 
+#define kPacketTypeArray @"connect", @"disconnect", @"event", @"ack", @"error", @"binaryEvent", @"binaryAck", nil
+
 @interface SocketPacket : NSObject
 
 @property (nonatomic, assign) NSInteger placeholders;
 
 @property (nonatomic, copy) NSString *nsp;
 @property (nonatomic, assign) NSInteger id;
-@property (nonatomic, assign) PacketType *type;
+@property (nonatomic, assign) PacketType type;
 
 @property (nonatomic, copy) NSData *binary;
 @property (nonatomic, copy) NSArray *data;
