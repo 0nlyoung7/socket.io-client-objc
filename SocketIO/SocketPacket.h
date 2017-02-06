@@ -24,7 +24,12 @@ typedef NS_ENUM(NSInteger, PacketType) {
 @property (nonatomic, copy) NSArray *data;
 @property (nonatomic, copy) NSArray *args;
 
--(void) init:(PacketType)type data:(NSArray *)data id:(NSInteger)id nsp:(NSString *)nsp
+@property (nonatomic, copy) NSString* event;
+@property (nonatomic, readonly) NSString* description;
+
++ (void)findType:(NSInteger)binCount ack:(Boolean)ack;
+
+- (void) init:(PacketType)type data:(NSArray *)data id:(NSInteger)id nsp:(NSString *)nsp
     placeholders:(NSInteger)placeholders binary:(NSData *) binary;
 
 @end

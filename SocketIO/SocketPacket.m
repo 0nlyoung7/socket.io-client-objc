@@ -6,8 +6,37 @@
 {
     
 }
+
+- (NSArray*) args {
     
-- (void) init:(PacketType)type data:(NSArray *)data id:(NSInteger)id nsp:(NSString *)nsp
+    if (self.type == Event || (self.type == BinaryEvent && self.data.count != 0) ) {
+        NSMutableArray *modifyableArray = [[NSMutableArray alloc] initWithArray:self.data];
+        [modifyableArray removeObjectAtIndex:0];
+        return [[NSArray alloc] initWithArray:modifyableArray];
+    } else {
+        return _data;
+    }
+    
+}
+
+- (NSString*) description
+{
+    return self.data[0];
+}
+
+- (NSString*) event
+{
+    NSString *result = [@"SocketPacket " stringByAppendingFormat:
+                         @"{type: %ld; data: %@; id: %ld; placeholders: %ld; nsp: %@", (long)self.type, self.data, (long)self.id, (long)self.placeholders, self.nsp];
+    return result;
+}
+
+- (NSString*) packetString
+{
+    return [self createPacketString];
+}
+
+- (void) init:(PacketType)type data:(NSMutableArray *)data id:(NSInteger)id nsp:(NSString *)nsp
     placeholders:(NSInteger)placeholders binary:(NSData *) binary
 {
     self.type = type;
@@ -42,7 +71,6 @@
 - (NSString*) createPacketString {
     NSString *typeString = [self packeyTypeEnumToString:self.type];
     // Binary count?
-
     
     NSString *tmpString = @"";
     
