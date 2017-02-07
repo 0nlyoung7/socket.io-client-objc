@@ -1,5 +1,6 @@
 #import "SocketParsable.h"
 #import "SocketPacket.h"
+#import "SocketTypes.h"
 
 @implementation SocketParsable
 {
