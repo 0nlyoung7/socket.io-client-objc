@@ -36,15 +36,43 @@
     return [self createPacketString];
 }
 
-- (void) init:(PacketType)type data:(NSMutableArray *)data id:(NSInteger)id nsp:(NSString *)nsp
+- (SocketPacket*) init:(PacketType)type nsp:(NSString *)nsp
+{
+    self = [super init];
+    if (self) {
+        self.type = type;
+        self.nsp = nsp;
+    }
+    return self;
+}
+
+
+- (SocketPacket*) init:(PacketType)type nsp:(NSString *)nsp placeholders:(NSInteger)placeholders
+{
+    self = [super init];
+    if (self) {
+        self.type = type;
+        self.nsp = nsp;
+        self.placeholders = placeholders;
+    }
+    return self;
+}
+
+
+- (SocketPacket*) init:(PacketType)type data:(NSMutableArray *)data id:(NSInteger)id nsp:(NSString *)nsp
     placeholders:(NSInteger)placeholders binary:(NSData *) binary
 {
-    self.type = type;
-    self.data = data;
-    self.id = id;
-    self.nsp = nsp;
-    self.placeholders = placeholders;
-    self.binary = binary;
+    self = [super init];
+    if (self) {
+        self.type = type;
+        self.data = data;
+        self.id = id;
+        self.nsp = nsp;
+        self.placeholders = placeholders;
+        self.binary = binary;
+        
+    }
+    return self;
 }
 
 - (NSString*) completeMessage:(NSString*)message

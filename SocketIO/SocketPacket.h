@@ -29,7 +29,11 @@ typedef NS_ENUM(NSInteger, PacketType) {
 
 + (void)findType:(NSInteger)binCount ack:(Boolean)ack;
 
-- (void) init:(PacketType)type data:(NSArray *)data id:(NSInteger)id nsp:(NSString *)nsp
+- (SocketPacket*) init:(PacketType)type nsp:(NSString *)nsp;
+
+- (SocketPacket*) init:(PacketType)type nsp:(NSString *)nsp placeholders:(NSInteger)placeholders;
+
+- (SocketPacket*) init:(PacketType)type data:(NSArray *)data id:(NSInteger)id nsp:(NSString *)nsp
     placeholders:(NSInteger)placeholders binary:(NSData *) binary;
 
 @end
