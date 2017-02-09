@@ -5,6 +5,9 @@
 
 }
 
+@synthesize nsp = _nsp;
+@synthesize waitingPackets = _waitingPackets;
+
 - (void) didError:(NSString*) reason {
     
     NSMutableArray *arrayout = [NSMutableArray array];

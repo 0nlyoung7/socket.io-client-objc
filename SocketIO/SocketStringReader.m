@@ -1,4 +1,5 @@
 #import "SocketStringReader.h"
+#import "SocketIOClientOption.h"
 
 #import <Foundation/Foundation.h>
 

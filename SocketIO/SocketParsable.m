@@ -113,7 +113,7 @@
     NSString *dataArray = [message substringFromIndex:reader.currentIndex+1];
     
     if (type == Error && ![dataArray hasPrefix:@"["] && ![dataArray hasSuffix:@"]"] ) {
-        dataArray = [[@"[" stringByAppendingString:dataArray ] stringByAppendingString:@"]" ];
+        dataArray = [ [@"[" stringByAppendingString:dataArray ] stringByAppendingString:@"]" ];
     }
     
     ParseArrayResult parseArrayResult = [self parseData:dataArray];
@@ -143,6 +143,42 @@
     }
         
     return parseArrayResult;
+}
+
+- (void) parseSocketMessage:(NSString*)message{
+    if ( ![self isStringEmpty:message] ) {
+        //      DefaultSocketLogger.Logger.log("Parsing %@", type: "SocketParser", args: message)
+        struct ParseResult parseResult;
+        
+        parseResult = [self parseString:message];
+        if( parseResult.socketPacket ){
+            [self handlePacket:parseResult.socketPacket];
+        } else {
+            // DefaultSocketLogger.Logger.log("Decoded packet as: %@", type: "SocketParser", args: pack.description)
+        }
+    }
+}
+
+// TODO : impl this;
+- (void) parseBinaryData:(NSData*) data{
+    if ( self.waitingPackets == nil || self.waitingPackets.count == 0) {
+         self.waitingPackets = [[NSMutableArray alloc]init];
+    }
+    
+    [self.waitingPackets addObject:data];
+}
+
+- (BOOL)isStringEmpty:(NSString *)string {
+    if([string length] == 0) { //string is empty or nil
+        return YES;
+    }
+    
+    if(![[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length]) {
+        //string is all whitespace
+        return YES;
+    }
+    
+    return NO;
 }
 
 @end

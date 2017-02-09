@@ -37,6 +37,7 @@
 		1A5729FA1E49ABB10089FE80 /* SocketTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketTypes.h; sourceTree = "<group>"; };
 		1A5729FB1E49AE360089FE80 /* SocketStringReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketStringReader.h; sourceTree = "<group>"; };
 		1A5729FC1E49AFD10089FE80 /* SocketStringReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketStringReader.m; sourceTree = "<group>"; };
+		1A572A271E4C60130089FE80 /* SocketIOClientOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketIOClientOption.h; sourceTree = "<group>"; };
 		1AB28CCF1E421F0B00471CD1 /* libSocketIO.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSocketIO.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AB28CDB1E421F4A00471CD1 /* SocketPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketPacket.m; sourceTree = "<group>"; };
 		1AB28CDD1E42210F00471CD1 /* SocketPacket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketPacket.h; sourceTree = "<group>"; };
@@ -84,6 +85,7 @@
 				1A5729FB1E49AE360089FE80 /* SocketStringReader.h */,
 				1A5729FC1E49AFD10089FE80 /* SocketStringReader.m */,
 				1A5729FA1E49ABB10089FE80 /* SocketTypes.h */,
+				1A572A271E4C60130089FE80 /* SocketIOClientOption.h */,
 			);
 			path = SocketIO;
 			sourceTree = "<group>";

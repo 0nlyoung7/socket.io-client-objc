@@ -3,6 +3,7 @@
 @protocol SocketIOClientSpec <NSObject>
 
 @property (nonatomic, copy) NSString *nsp;
+@property (nonatomic, copy) NSMutableArray *waitingPackets;
 
 @optional
 - (void) didConnect;
