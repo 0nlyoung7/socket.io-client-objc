@@ -2,7 +2,7 @@
 
 @implementation SocketIOClient
 {
-    
+        
 }
 
 @end

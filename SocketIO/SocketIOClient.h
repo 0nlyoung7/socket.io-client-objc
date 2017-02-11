@@ -1,5 +1,8 @@
 #import <Foundation/Foundation.h>
 
-@interface SocketIOClient : NSObject
+#import "SocketEngineClient.h"
+#import "SocketParsable.h"
+
+@interface SocketIOClient : NSObject<SocketEngineClient, SocketParsable>
 
 @end
