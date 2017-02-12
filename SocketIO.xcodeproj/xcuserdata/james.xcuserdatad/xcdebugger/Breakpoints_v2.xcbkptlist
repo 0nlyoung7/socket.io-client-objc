@@ -474,9 +474,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2"
-            endingLineNumber = "2"
-            landmarkName = "@interface SocketIOClient"
-            landmarkType = "2">
+            endingLineNumber = "2">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -490,9 +488,23 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3"
-            endingLineNumber = "3"
-            landmarkName = "@interface SocketIOClient"
-            landmarkType = "2">
+            endingLineNumber = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SocketIO/SSLSecurity.h"
+            timestampString = "508558680.133728"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "18"
+            endingLineNumber = "18"
+            landmarkName = "isReady"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

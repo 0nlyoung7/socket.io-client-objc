@@ -5,8 +5,28 @@
 
 @protocol SocketEngineSpec <NSObject>
 
-@property (nonatomic, copy) NSString *nsp;
-@property (nonatomic, copy) NSMutableArray *waitingPackets;
+@property (nonatomic, weak) SocketEngineClient *client;
+@property (nonatomic) BOOL closed;
+@property (nonatomic) BOOL connected;
+@property (nonatomic) NSDictionary *connectParams;
+@property (nonatomic) BOOL doubleEncodeUTF8;
+@property (nonatomic) NSDictionary *cookies;
+@property (nonatomic) NSDictionary *extraHeaders;
+
+@property (nonatomic) BOOL fastUpgrade;
+@property (nonatomic) BOOL forcePolling;
+@property (nonatomic) BOOL forceWebsockets;
+
+@property (nonatomic) BOOL polling;
+@property (nonatomic) BOOL probing;
+
+@property (nonatomic) NSString *sid;
+@property (nonatomic) NSString *socketPath;
+@property (nonatomic) NSUrl *urlPolling;
+@property (nonatomic) NSUrl *urlWebSocket
+
+@property (nonatomic) BOOL websocket;
+
 
 @optional
 - (void) connect;

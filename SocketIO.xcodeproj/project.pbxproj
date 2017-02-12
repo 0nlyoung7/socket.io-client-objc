@@ -38,6 +38,7 @@
 		1A523B581E4E937A009D689F /* SocketAckEmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketAckEmitter.h; sourceTree = "<group>"; };
 		1A523B591E4E9932009D689F /* SocketEngineSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketEngineSpec.h; sourceTree = "<group>"; };
 		1A523B5A1E4E9AEB009D689F /* SocketEnginePacketType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketEnginePacketType.h; sourceTree = "<group>"; };
+		1A523B7D1E4FFD81009D689F /* SocketIOClientStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketIOClientStatus.h; sourceTree = "<group>"; };
 		1A5729FA1E49ABB10089FE80 /* SocketTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketTypes.h; sourceTree = "<group>"; };
 		1A5729FB1E49AE360089FE80 /* SocketStringReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketStringReader.h; sourceTree = "<group>"; };
 		1A5729FC1E49AFD10089FE80 /* SocketStringReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketStringReader.m; sourceTree = "<group>"; };
@@ -80,8 +81,6 @@
 			isa = PBXGroup;
 			children = (
 				1A523B581E4E937A009D689F /* SocketAckEmitter.h */,
-				1AB28CDD1E42210F00471CD1 /* SocketPacket.h */,
-				1AB28CDB1E421F4A00471CD1 /* SocketPacket.m */,
 				1A523B041E46C406009D689F /* SocketIOClient.h */,
 				1A523B051E46C42E009D689F /* SocketIOClient.m */,
 				1A523B071E46C5E2009D689F /* SocketEngineClient.h */,
@@ -89,6 +88,9 @@
 				1A523B5A1E4E9AEB009D689F /* SocketEnginePacketType.h */,
 				1A523B081E46C74F009D689F /* SocketIOClientSpec.h */,
 				1A523B331E46D5D1009D689F /* SocketIOClientSpec.m */,
+				1A523B7D1E4FFD81009D689F /* SocketIOClientStatus.h */,
+				1AB28CDD1E42210F00471CD1 /* SocketPacket.h */,
+				1AB28CDB1E421F4A00471CD1 /* SocketPacket.m */,
 				1A523B0B1E46CA71009D689F /* SocketParsable.h */,
 				1A523B351E46DA45009D689F /* SocketParsable.m */,
 				1A5729FB1E49AE360089FE80 /* SocketStringReader.h */,
