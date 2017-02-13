@@ -10,3 +10,7 @@
 - (void) parseEngineBinaryData:(NSData*) data;
 
 @end
+
+@interface SocketEngineClient : NSObject <SocketEngineClient>
+
+@end

@@ -9,4 +9,6 @@
 
 - (instancetype)init:(SocketIOClient) socket ackNum:(NSInteger)ackNum;
 
+- (void)with:(NSArray*) items;
+
 @end

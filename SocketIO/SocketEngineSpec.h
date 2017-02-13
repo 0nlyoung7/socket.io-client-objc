@@ -22,8 +22,10 @@
 
 @property (nonatomic) NSString *sid;
 @property (nonatomic) NSString *socketPath;
-@property (nonatomic) NSUrl *urlPolling;
-@property (nonatomic) NSUrl *urlWebSocket
+@property (nonatomic) NSURL *urlPolling;
+@property (nonatomic) NSURL *urlWebSocket;
+
+@property (nonatomic, readonly) NSURL *urlPollingWithSid;
 
 @property (nonatomic) BOOL websocket;
 
@@ -37,9 +39,8 @@
 - (void) parseEngineData:(NSData*) data;
 - (void) parseEngineMessage:(NSString*) message fromPolling:(BOOL)fromPolling;
 - (void) write:(NSString*) msg withType:(SocketEnginePacketType)type withData:(NSArray*) data;
-
 @end
 
-@interface SocketIOClientSpec : NSObject <SocketIOClientSpec>
+@interface SocketEngineSpec : NSObject <SocketEngineSpec>
 
 @end
