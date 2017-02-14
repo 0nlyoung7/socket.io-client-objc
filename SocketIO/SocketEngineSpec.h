@@ -38,7 +38,7 @@
 - (void) flushWaitingForPostToWebSocket;
 - (void) parseEngineData:(NSData*) data;
 - (void) parseEngineMessage:(NSString*) message fromPolling:(BOOL)fromPolling;
-- (void) write:(NSString*) msg withType:(SocketEnginePacketType)type withData:(NSArray*) data;
+- (void) write:(NSString *_Nonnull) msg withType:(enum SocketEnginePacketType)type withData:(NSArray<NSData*> *_Nonnull) data;
 @end
 
 @interface SocketEngineSpec : NSObject <SocketEngineSpec>
