@@ -13,6 +13,7 @@
 		1A5729FD1E49AFD10089FE80 /* SocketStringReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5729FC1E49AFD10089FE80 /* SocketStringReader.m */; };
 		1A572A4C1E4D75D00089FE80 /* SSLSecurity.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A572A4B1E4D75D00089FE80 /* SSLSecurity.m */; };
 		1A572A5F1E51A9AC0089FE80 /* SocketEngineSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A572A5E1E51A9AC0089FE80 /* SocketEngineSpec.m */; };
+		1A572A641E53D9CD0089FE80 /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A572A631E53D9CD0089FE80 /* WebSocket.m */; };
 		1AB28CDC1E421F4A00471CD1 /* SocketPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB28CDB1E421F4A00471CD1 /* SocketPacket.m */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +48,8 @@
 		1A572A4A1E4D5D7F0089FE80 /* SSLSecurity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSLSecurity.h; sourceTree = "<group>"; };
 		1A572A4B1E4D75D00089FE80 /* SSLSecurity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSLSecurity.m; sourceTree = "<group>"; };
 		1A572A5E1E51A9AC0089FE80 /* SocketEngineSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketEngineSpec.m; sourceTree = "<group>"; };
+		1A572A621E53D80D0089FE80 /* WebSocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
+		1A572A631E53D9CD0089FE80 /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
 		1AB28CCF1E421F0B00471CD1 /* libSocketIO.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSocketIO.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AB28CDB1E421F4A00471CD1 /* SocketPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketPacket.m; sourceTree = "<group>"; };
 		1AB28CDD1E42210F00471CD1 /* SocketPacket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketPacket.h; sourceTree = "<group>"; };
@@ -102,6 +105,8 @@
 				1A572A271E4C60130089FE80 /* SocketIOClientOption.h */,
 				1A572A4A1E4D5D7F0089FE80 /* SSLSecurity.h */,
 				1A572A4B1E4D75D00089FE80 /* SSLSecurity.m */,
+				1A572A621E53D80D0089FE80 /* WebSocket.h */,
+				1A572A631E53D9CD0089FE80 /* WebSocket.m */,
 			);
 			path = SocketIO;
 			sourceTree = "<group>";
@@ -168,6 +173,7 @@
 				1A572A4C1E4D75D00089FE80 /* SSLSecurity.m in Sources */,
 				1A5729FD1E49AFD10089FE80 /* SocketStringReader.m in Sources */,
 				1A523B361E46DA45009D689F /* SocketParsable.m in Sources */,
+				1A572A641E53D9CD0089FE80 /* WebSocket.m in Sources */,
 				1A572A5F1E51A9AC0089FE80 /* SocketEngineSpec.m in Sources */,
 				1A523B341E46D5D1009D689F /* SocketIOClientSpec.m in Sources */,
 			);
