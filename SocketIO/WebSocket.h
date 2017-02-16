@@ -52,7 +52,7 @@ typedef NS_ENUM(uint16_t, InternalErrorCode) {
 
 - (void)writePing:(nonnull NSData*)data;
 
-- (void)addHeader:(nonnull NSString*)value forKey:(nonnull NSString*)key;
+- (void)addHeader:(nonnull CFHTTPMessageRef)urlRequset key:(nonnull NSString*)key value:(nonnull NSString*)val;
 
 @property(nonatomic, strong, nullable)void (^onConnect)(void);
 
@@ -65,8 +65,9 @@ typedef NS_ENUM(uint16_t, InternalErrorCode) {
 @property(nonatomic, strong, nullable)void (^onPong)(NSData*_Nullable);
 
 @property(nonatomic, strong, nullable)NSMutableDictionary *headers;
-@property(nonatomic, assign)BOOL voipEnabled;
-@property(nonatomic, assign)BOOL disableSSLCertValidation;
+@property(nonatomic, assign) BOOL voipEnabled;
+@property(nonatomic, assign) BOOL disableSSLCertValidation;
+@property(nonatomic, strong, nullable)NSString *origin;
 @property(nonatomic, strong, nullable)SSLSecurity *security;
 @property(nonatomic, assign, readonly)BOOL isConnected;
 
