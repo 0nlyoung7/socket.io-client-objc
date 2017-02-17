@@ -143,6 +143,10 @@ static const size_t  MaxFrameSize        = 32;
     for(NSString *key in self.headers) {
         [self addHeader:urlRequest key:key val:self.headers[key]];
     }
+    
+    NSData *serializedRequest = (__bridge_transfer NSData *)(CFHTTPMessageCopySerializedMessage(urlRequest));
+    [self initStreamsWithData:serializedRequest port:port];
+    CFRelease(urlRequest);
 }
 
 -(void) addHeader:(CFHTTPMessageRef) urlRequset key:(NSString *)key val:(NSString *)val {
@@ -158,6 +162,54 @@ static const size_t  MaxFrameSize        = 32;
         [string appendFormat:@"%C", (unichar)('a' + arc4random_uniform(25))];
     }
     return [[string dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//Sets up our reader/writer for the TCP stream.
+- (void)initStreamsWithData:(NSData*)data port:(NSNumber*)port {
+    CFReadStreamRef readStream = NULL;
+    CFWriteStreamRef writeStream = NULL;
+    CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)self.url.host, [port intValue], &readStream, &writeStream);
+    
+    self.inputStream = (__bridge_transfer NSInputStream *)readStream;
+    self.inputStream.delegate = self;
+    self.outputStream = (__bridge_transfer NSOutputStream *)writeStream;
+    self.outputStream.delegate = self;
+    if([self.url.scheme isEqualToString:@"wss"] || [self.url.scheme isEqualToString:@"https"]) {
+        [self.inputStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
+        [self.outputStream setProperty:NSStreamSocketSecurityLevelNegotiatedSSL forKey:NSStreamSocketSecurityLevelKey];
+    
+        if(self.disableSSLCertValidation) {
+            NSString *chain = (__bridge_transfer NSString *)kCFStreamSSLValidatesCertificateChain;
+            NSString *peerName = (__bridge_transfer NSString *)kCFStreamSSLPeerName;
+            NSString *key = (__bridge_transfer NSString *)kCFStreamPropertySSLSettings;
+            NSDictionary *settings = @{chain: [[NSNumber alloc] initWithBool:NO],
+                                       peerName: [NSNull null]};
+            [self.inputStream setProperty:settings forKey:key];
+            [self.outputStream setProperty:settings forKey:key];
+        }
+        
+    } else {
+        self.certValidated = YES; //not a https session, so no need to check SSL pinning
+    }
+
+    if(self.voipEnabled) {
+        [self.inputStream setProperty:NSStreamNetworkServiceTypeVoIP forKey:NSStreamNetworkServiceType];
+        [self.outputStream setProperty:NSStreamNetworkServiceTypeVoIP forKey:NSStreamNetworkServiceType];
+    }
+    
+    self.isRunLoop = YES;
+    [self.inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [self.outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    
+    [self.inputStream open];
+    [self.outputStream open];
+    
+    size_t dataLen = [data length];
+    [self.outputStream write:[data bytes] maxLength:dataLen];
+    while (self.isRunLoop) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+    }
 }
 
 @end

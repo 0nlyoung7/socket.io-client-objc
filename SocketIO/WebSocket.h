@@ -67,8 +67,9 @@ typedef NS_ENUM(uint16_t, InternalErrorCode) {
 @property(nonatomic, strong, nullable)NSMutableDictionary *headers;
 @property(nonatomic, assign) BOOL voipEnabled;
 @property(nonatomic, assign) BOOL disableSSLCertValidation;
-@property(nonatomic, strong, nullable)NSString *origin;
 @property(nonatomic, strong, nullable)SSLSecurity *security;
+
+@property(nonatomic, strong, nullable)NSString *origin;
 @property(nonatomic, assign, readonly)BOOL isConnected;
 
 @property(nonatomic, strong, nullable)dispatch_queue_t queue;
