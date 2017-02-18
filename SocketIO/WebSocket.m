@@ -1,9 +1,5 @@
 #import "WebSocket.h"
 
-NSString *const WebsocketDidConnectNotification = @"WebsocketDidConnectNotification";
-NSString *const WebsocketDidDisconnectNotification = @"WebsocketDidDisconnectNotification";
-NSString *const WebsocketDisconnectionErrorKeyName = @"WebsocketDisconnectionErrorKeyName";
-
 static NSString *const ErrorDomain = @"WebSocket";
 
 @interface WSResponse : NSObject
@@ -35,6 +31,10 @@ static NSString *const ErrorDomain = @"WebSocket";
 
 //Constant Header Values.
 NS_ASSUME_NONNULL_BEGIN
+static NSString *const WebsocketDidConnectNotification = @"WebsocketDidConnectNotification";
+static NSString *const WebsocketDidDisconnectNotification = @"WebsocketDidDisconnectNotification";
+static NSString *const WebsocketDisconnectionErrorKeyName = @"WebsocketDisconnectionErrorKeyName";
+
 static NSString *const headerWSUpgradeName     = @"Upgrade";
 static NSString *const headerWSUpgradeValue    = @"websocket";
 static NSString *const headerWSHostName        = @"Host";
@@ -60,7 +60,7 @@ static const uint8_t MaskMask            = 0x80;
 static const uint8_t PayloadLenMask      = 0x7F;
 static const size_t  MaxFrameSize        = 32;
 
-#define HttpSwitchProtocolCode 101
+#define kHttpSwitchProtocolCode 101
 
 @implementation WebSocket
 {
@@ -210,6 +210,192 @@ static const size_t  MaxFrameSize        = 32;
     while (self.isRunLoop) {
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
     }
+}
+
+- (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode {
+    if(self.security && !self.certValidated && (eventCode == NSStreamEventHasBytesAvailable || eventCode == NSStreamEventHasSpaceAvailable)) {
+        SecTrustRef trust = (__bridge SecTrustRef)([aStream propertyForKey:(__bridge_transfer NSString *)kCFStreamPropertySSLPeerTrust]);
+        NSString *domain = [aStream propertyForKey:(__bridge_transfer NSString *)kCFStreamSSLPeerName];
+        if([self.security isValid:trust domain:domain]) {
+            self.certValidated = YES;
+        } else {
+            [self disconnectStream:[self errorWithDetail:@"Invalid SSL certificate" code:1]];
+            return;
+        }
+    }
+    switch (eventCode) {
+        case NSStreamEventNone:
+            break;
+            
+        case NSStreamEventOpenCompleted:
+            break;
+            
+        case NSStreamEventHasBytesAvailable:
+            if(aStream == self.inputStream) {
+                [self processInputStream];
+            }
+            break;
+            
+        case NSStreamEventHasSpaceAvailable:
+            break;
+            
+        case NSStreamEventErrorOccurred:
+            [self disconnectStream:[aStream streamError]];
+            break;
+            
+        case NSStreamEventEndEncountered:
+            [self disconnectStream:nil];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void)disconnectStream:(NSError*)error {
+    [self.writeQueue waitUntilAllOperationsAreFinished];
+    [self.inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [self.outputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [self.outputStream close];
+    [self.inputStream close];
+    self.outputStream = nil;
+    self.inputStream = nil;
+    self.isRunLoop = NO;
+    _isConnected = NO;
+    self.certValidated = NO;
+    [self doDisconnect:error];
+}
+
+- (void)processInputStream {
+    @autoreleasepool {
+        uint8_t buffer[BUFFER_MAX];
+        NSInteger length = [self.inputStream read:buffer maxLength:BUFFER_MAX];
+        if(length > 0) {
+            BOOL process = NO;
+            if(self.inputQueue.count == 0) {
+                process = YES;
+            }
+            [self.inputQueue addObject:[NSData dataWithBytes:buffer length:length]];
+            if  (process) {
+                [self dequeueInput];
+            }
+        }
+    }
+}
+
+- (void)dequeueInput {
+    while(self.inputQueue.count > 0) {
+        NSData *data = [self.inputQueue objectAtIndex:0];
+        NSData *work = data;
+        if(self.fragBuffer) {
+            NSMutableData *combine = [NSMutableData dataWithData:self.fragBuffer];
+            [combine appendData:data];
+            work = combine;
+            self.fragBuffer = nil;
+        }
+        if(!self.isConnected) {
+            CFIndex responseStatusCode;
+             // TODO
+            //[self processTCPHandshake:(uint8_t*)work.bytes length:work.length responseStatusCode:&responseStatusCode];
+        } else {
+             // TODO
+            //[self processRawMessage:(uint8_t*)work.bytes length:work.length];
+        }
+        [self.inputQueue removeObject:data];
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//Finds the HTTP Packet in the TCP stream, by looking for the CRLF.
+- (BOOL)processHTTP:(uint8_t*)buffer length:(NSInteger)bufferLen responseStatusCode:(CFIndex*)responseStatusCode {
+    int k = 0;
+    NSInteger totalSize = 0;
+    for(int i = 0; i < bufferLen; i++) {
+        if(buffer[i] == CRLFBytes[k]) {
+            k++;
+            if(k == 3) {
+                totalSize = i + 1;
+                break;
+            }
+        } else {
+            k = 0;
+        }
+    }
+    if(totalSize > 0) {
+        BOOL status = [self validateResponse:buffer length:totalSize responseStatusCode:responseStatusCode];
+        if (status == YES) {
+            _isConnected = YES;
+            __weak typeof(self) weakSelf = self;
+            dispatch_async(self.queue,^{
+                if([self.delegate respondsToSelector:@selector(websocketDidConnect:)]) {
+                    [weakSelf.delegate websocketDidConnect:self];
+                }
+                if(weakSelf.onConnect) {
+                    weakSelf.onConnect();
+                }
+            });
+            totalSize += 1; //skip the last \n
+            NSInteger  restSize = bufferLen-totalSize;
+            if(restSize > 0) {
+                // TODO
+                // [self processRawMessage:(buffer+totalSize) length:restSize];
+            }
+        }
+        return status;
+    }
+    return NO;
+}
+
+
+
+//Validate the HTTP is a 101, as per the RFC spec.
+- (BOOL)validateResponse:(uint8_t *)buffer length:(NSInteger)bufferLen responseStatusCode:(CFIndex*)responseStatusCode {
+    CFHTTPMessageRef response = CFHTTPMessageCreateEmpty(kCFAllocatorDefault, NO);
+    CFHTTPMessageAppendBytes(response, buffer, bufferLen);
+    *responseStatusCode = CFHTTPMessageGetResponseStatusCode(response);
+    BOOL status = ((*responseStatusCode) == kHttpSwitchProtocolCode)?(YES):(NO);
+    if(status == NO) {
+        CFRelease(response);
+        return NO;
+    }
+    NSDictionary *headers = (__bridge_transfer NSDictionary *)(CFHTTPMessageCopyAllHeaderFields(response));
+    NSString *acceptKey = headers[headerWSAcceptName];
+    CFRelease(response);
+    if(acceptKey.length > 0) {
+        return YES;
+    }
+    return NO;
+}
+
+- (void)doDisconnect:(NSError*)error {
+    if(!self.didDisconnect) {
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(self.queue, ^{
+            weakSelf.didDisconnect = YES;
+            [weakSelf disconnect];
+            if([weakSelf.delegate respondsToSelector:@selector(websocketDidDisconnect:error:)]) {
+                [weakSelf.delegate websocketDidDisconnect:weakSelf error:error];
+            }
+            if(weakSelf.onDisconnect) {
+                weakSelf.onDisconnect(error);
+            }
+        });
+    }
+}
+
+- (NSError*)errorWithDetail:(NSString*)detail code:(NSInteger)code
+{
+    return [self errorWithDetail:detail code:code userInfo:nil];
+}
+
+- (NSError*)errorWithDetail:(NSString*)detail code:(NSInteger)code userInfo:(NSDictionary *)userInfo
+{
+    NSMutableDictionary* details = [NSMutableDictionary dictionary];
+    details[detail] = NSLocalizedDescriptionKey;
+    if (userInfo) {
+        [details addEntriesFromDictionary:userInfo];
+    }
+    return [[NSError alloc] initWithDomain:ErrorDomain code:code userInfo:details];
 }
 
 @end

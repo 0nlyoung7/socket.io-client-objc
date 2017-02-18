@@ -3,13 +3,16 @@
 
 #import "SSLSecurity.h"
 
+@class WebSocket;
+
 @protocol WebSocketDelegate <NSObject>
 
-@end
+@optional
 
-FOUNDATION_EXPORT NSString *const WebsocketDidConnectNotification;
-FOUNDATION_EXPORT NSString *const WebsocketDidDisconnectNotification;
-FOUNDATION_EXPORT NSString *const WebsocketDisconnectionErrorKeyName;
+-(void)websocketDidDisconnect:(nonnull WebSocket*)socket error:(nullable NSError*)error;
+-(void)websocketDidConnect:(nonnull WebSocket*)socket;
+
+@end
 
 @interface WebSocket : NSObject <NSStreamDelegate>
     
