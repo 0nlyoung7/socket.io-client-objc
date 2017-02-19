@@ -253,9 +253,20 @@ static const size_t  MaxFrameSize        = 32;
 }
 
 - (void)disconnectStream:(NSError*)error {
-    [self.writeQueue waitUntilAllOperationsAreFinished];
+    if ( error == nil ) {
+        [self.writeQueue waitUntilAllOperationsAreFinished];
+    } else {
+        [self.writeQueue cancelAllOperations];
+    }
+
+    [self cleanupStream];
+    [self doDisconnect:error];
+}
+
+- (void)cleanupStream {
     [self.inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     [self.outputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    
     [self.outputStream close];
     [self.inputStream close];
     self.outputStream = nil;
@@ -263,7 +274,6 @@ static const size_t  MaxFrameSize        = 32;
     self.isRunLoop = NO;
     _isConnected = NO;
     self.certValidated = NO;
-    [self doDisconnect:error];
 }
 
 - (void)processInputStream {
@@ -367,6 +377,78 @@ static const size_t  MaxFrameSize        = 32;
     return NO;
 }
 
+-(void)dequeueWrite:(NSData*)data code:(OpCode)code {
+    if(!self.isConnected) {
+        return;
+    }
+    if(!self.writeQueue) {
+        self.writeQueue = [[NSOperationQueue alloc] init];
+        self.writeQueue.maxConcurrentOperationCount = 1;
+    }
+    
+    __weak typeof(self) weakSelf = self;
+    [self.writeQueue addOperationWithBlock:^{
+        if(!weakSelf || !weakSelf.isConnected) {
+            return;
+        }
+        typeof(weakSelf) strongSelf = weakSelf;
+        uint64_t offset = 2; //how many bytes do we need to skip for the header
+        uint8_t *bytes = (uint8_t*)[data bytes];
+        uint64_t dataLength = data.length;
+        NSMutableData *frame = [[NSMutableData alloc] initWithLength:(NSInteger)(dataLength + MaxFrameSize)];
+        uint8_t *buffer = (uint8_t*)[frame mutableBytes];
+        buffer[0] = FinMask | code;
+        if(dataLength < 126) {
+            buffer[1] |= dataLength;
+        } else if(dataLength <= UINT16_MAX) {
+            buffer[1] |= 126;
+            *((uint16_t *)(buffer + offset)) = CFSwapInt16BigToHost((uint16_t)dataLength);
+            offset += sizeof(uint16_t);
+        } else {
+            buffer[1] |= 127;
+            *((uint64_t *)(buffer + offset)) = CFSwapInt64BigToHost((uint64_t)dataLength);
+            offset += sizeof(uint64_t);
+        }
+        BOOL isMask = YES;
+        if(isMask) {
+            buffer[1] |= MaskMask;
+            uint8_t *maskKey = (buffer + offset);
+            int secRan = SecRandomCopyBytes(kSecRandomDefault, sizeof(uint32_t), (uint8_t *)maskKey);
+            offset += sizeof(uint32_t);
+            
+            for (size_t i = 0; i < dataLength; i++) {
+                buffer[offset] = bytes[i] ^ maskKey[i % sizeof(uint32_t)];
+                offset += 1;
+            }
+        } else {
+            for(size_t i = 0; i < dataLength; i++) {
+                buffer[offset] = bytes[i];
+                offset += 1;
+            }
+        }
+        uint64_t total = 0;
+        while (true) {
+            if(!strongSelf.isConnected || !strongSelf.outputStream) {
+                break;
+            }
+            NSInteger len = [strongSelf.outputStream write:([frame bytes]+total) maxLength:(NSInteger)(offset-total)];
+            if(len < 0 || len == NSNotFound) {
+                NSError *error = strongSelf.outputStream.streamError;
+                if(!error) {
+                    error = [strongSelf errorWithDetail:@"output stream error during write" code:OutputStreamWriteError];
+                }
+                [strongSelf doDisconnect:error];
+                break;
+            } else {
+                total += len;
+            }
+            if(total >= offset) {
+                break;
+            }
+        }
+    }];
+}
+
 - (void)doDisconnect:(NSError*)error {
     if(!self.didDisconnect) {
         __weak typeof(self) weakSelf = self;
@@ -396,6 +478,18 @@ static const size_t  MaxFrameSize        = 32;
         [details addEntriesFromDictionary:userInfo];
     }
     return [[NSError alloc] initWithDomain:ErrorDomain code:code userInfo:details];
+}
+
+- (void)writeError:(uint16_t)code {
+    uint16_t buffer[1];
+    buffer[0] = CFSwapInt16BigToHost(code);
+    [self dequeueWrite:[NSData dataWithBytes:buffer length:sizeof(uint16_t)] code:ConnectionClose];
+}
+
+- (void)dealloc {
+    if(self.isConnected) {
+        [self disconnect];
+    }
 }
 
 @end
