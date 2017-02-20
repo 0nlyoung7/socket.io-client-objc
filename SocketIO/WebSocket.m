@@ -74,8 +74,11 @@ static const size_t  MaxFrameSize        = 32;
         //self.selfSignedSSL = NO;
         self.queue = dispatch_get_main_queue();
         self.url = url;
+        self.origin = [url absoluteString];
+        
         self.readStack = [NSMutableArray new];
         self.inputQueue = [NSMutableArray new];
+        
         self.optProtocols = protocols;
     }
     
@@ -100,11 +103,32 @@ static const size_t  MaxFrameSize        = 32;
     });
 }
 
-/**
-- (void)disconnect {
-    [self writeError:JFRCloseCodeNormal];
+- (void)disconnect:(NSTimeInterval) forceTimeout closeCode:(UInt16) closeCode  {
+    
+    if( forceTimeout > 0 ){
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, forceTimeout * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [self disconnectStream:nil];
+        });
+    } else if ( forceTimeout == 0 ){
+         [self writeError:Normal];
+    }
+    [self disconnectStream:nil];
 }
- */
+
+- (void)writeString:(NSString*)string {
+    if(string) {
+        [self dequeueWrite:[string dataUsingEncoding:NSUTF8StringEncoding]
+                  code:TextFrame];
+    }
+}
+
+- (void)writePing:(NSData*)data {
+    [self dequeueWrite:data code:Ping];
+}
+
+- (void)writeData:(NSData*)data {
+    [self dequeueWrite:data code:BinaryFrame];
+}
 
 - (void) createHTTPRequest {
     CFURLRef url = CFURLCreateWithString(kCFAllocatorDefault, (CFStringRef)self.url.absoluteString, NULL);

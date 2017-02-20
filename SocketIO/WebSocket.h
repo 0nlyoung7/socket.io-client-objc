@@ -12,6 +12,10 @@
 -(void)websocketDidDisconnect:(nonnull WebSocket*)socket error:(nullable NSError*)error;
 -(void)websocketDidConnect:(nonnull WebSocket*)socket;
 
+-(void)websocket:(nonnull WebSocket*)socket didReceiveMessage:(nonnull NSString*)string;
+
+-(void)websocket:(nonnull WebSocket*)socket didReceiveData:(nullable NSData*)data;
+
 @end
 
 @interface WebSocket : NSObject <NSStreamDelegate>
@@ -40,7 +44,7 @@ typedef NS_ENUM(uint16_t, InternalErrorCode) {
     OutputStreamWriteError = 1
 };
 
-@property(nonatomic,weak, nullable)id<WebSocketDelegate>delegate;
+@property(nonatomic,weak, nullable)id<WebSocketDelegate> delegate;
 @property(nonatomic, readonly, nonnull) NSURL *url;
 
 - (nonnull instancetype)initWithURL:(nonnull NSURL *)url protocols:(nullable NSArray*)protocols;
