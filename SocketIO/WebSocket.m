@@ -339,9 +339,28 @@ static const size_t  MaxFrameSize        = 32;
     }
 }
 
+- (void) processTCPHandshake:(uint8_t*)buffer length:(NSInteger)bufferLen {
+    BOOL code = [self processHTTP:buffer length:bufferLen];
+    if ( code == YES ){
+        _isConnected = YES;
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(self.queue,^{
+            if([self.delegate respondsToSelector:@selector(websocketDidConnect:)]) {
+                [weakSelf.delegate websocketDidConnect:self];
+            }
+            if(weakSelf.onConnect) {
+                weakSelf.onConnect();
+            }
+        });
+        
+    } else if ( code == NO ){
+        [self disconnectStream:[self errorWithDetail:@"Invalid HTTP upgrade" code:(uint64_t)code]];
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 //Finds the HTTP Packet in the TCP stream, by looking for the CRLF.
-- (BOOL)processHTTP:(uint8_t*)buffer length:(NSInteger)bufferLen responseStatusCode:(CFIndex*)responseStatusCode {
+- (BOOL)processHTTP:(uint8_t*)buffer length:(NSInteger)bufferLen {
     int k = 0;
     NSInteger totalSize = 0;
     for(int i = 0; i < bufferLen; i++) {
@@ -356,18 +375,8 @@ static const size_t  MaxFrameSize        = 32;
         }
     }
     if(totalSize > 0) {
-        BOOL status = [self validateResponse:buffer length:totalSize responseStatusCode:responseStatusCode];
+        BOOL status = [self validateResponse:buffer length:totalSize];
         if (status == YES) {
-            _isConnected = YES;
-            __weak typeof(self) weakSelf = self;
-            dispatch_async(self.queue,^{
-                if([self.delegate respondsToSelector:@selector(websocketDidConnect:)]) {
-                    [weakSelf.delegate websocketDidConnect:self];
-                }
-                if(weakSelf.onConnect) {
-                    weakSelf.onConnect();
-                }
-            });
             totalSize += 1; //skip the last \n
             NSInteger  restSize = bufferLen-totalSize;
             if(restSize > 0) {
@@ -383,11 +392,11 @@ static const size_t  MaxFrameSize        = 32;
 
 
 //Validate the HTTP is a 101, as per the RFC spec.
-- (BOOL)validateResponse:(uint8_t *)buffer length:(NSInteger)bufferLen responseStatusCode:(CFIndex*)responseStatusCode {
+- (BOOL)validateResponse:(uint8_t *)buffer length:(NSInteger)bufferLen {
     CFHTTPMessageRef response = CFHTTPMessageCreateEmpty(kCFAllocatorDefault, NO);
     CFHTTPMessageAppendBytes(response, buffer, bufferLen);
-    *responseStatusCode = CFHTTPMessageGetResponseStatusCode(response);
-    BOOL status = ((*responseStatusCode) == kHttpSwitchProtocolCode)?(YES):(NO);
+    CFIndex responseStatusCode = CFHTTPMessageGetResponseStatusCode(response);
+    BOOL status = ((responseStatusCode) == kHttpSwitchProtocolCode)?(YES):(NO);
     if(status == NO) {
         CFRelease(response);
         return NO;
