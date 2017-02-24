@@ -59,7 +59,7 @@
 }
 
 
-- (SocketPacket*) init:(PacketType)type data:(NSMutableArray *)data id:(NSInteger)id nsp:(NSString *)nsp
+- (SocketPacket*) initWithData:(PacketType)type data:(NSArray *)data id:(NSInteger)id nsp:(NSString *)nsp
     placeholders:(NSInteger)placeholders binary:(NSData *) binary
 {
     self = [super init];
@@ -136,10 +136,32 @@
 }
 
 
+
 -(NSString*) packeyTypeEnumToString:(PacketType)enumVal
 {
     NSArray *packetTypeArray = [[NSArray alloc] initWithObjects:kPacketTypeArray];
     return [packetTypeArray objectAtIndex:enumVal];
+}
+
++(PacketType) findType:(int)binCount ack:(BOOL)ack {
+    if( binCount == 0 && !ack ){
+        return Event;
+    } else if ( binCount == 0 && ack ){
+        return Ack;
+    } else if ( !ack ){
+         return BinaryEvent;
+    } else if ( ack ){
+        return BinaryAck;
+    } else {
+        return Error;
+    }
+}
+
+
++(instancetype) packetFromEmit:(NSArray*) items id:(NSInteger)id nsp:(NSString*)nsp ack:(BOOL) ack {
+    PacketType packetType = [self findType:0 ack:ack];
+    SocketPacket *packet = [[SocketPacket init] initWithData:packetType data:items id:id nsp:nsp placeholders:0 binary:nil];
+    return packet;
 }
 
 @end

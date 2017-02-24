@@ -4,10 +4,10 @@
 
 @interface SocketAckEmitter : NSObject
 
-@property (nonatomic, assign) SocketIOClient socket;
+@property (nonatomic, copy) SocketIOClient *socket;
 @property (nonatomic, assign) NSInteger ackNum;
 
-- (instancetype)init:(SocketIOClient) socket ackNum:(NSInteger)ackNum;
+- (instancetype)initWithSocket:(SocketIOClient*) socket ackNum:(NSInteger)ackNum;
 
 - (void)with:(NSArray*) items;
 

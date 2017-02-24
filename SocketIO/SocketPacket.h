@@ -16,24 +16,26 @@ typedef NS_ENUM(NSInteger, PacketType) {
 
 @property (nonatomic, assign) NSInteger placeholders;
 
-@property (nonatomic, copy) NSString *nsp;
+@property (nonatomic, copy, nonnull) NSString *nsp;
 @property (nonatomic, assign) NSInteger id;
 @property (nonatomic, assign) PacketType type;
 
-@property (nonatomic, copy) NSData *binary;
-@property (nonatomic, copy) NSArray *data;
-@property (nonatomic, copy) NSArray *args;
+@property (nonatomic, copy, nullable) NSData *binary;
+@property (nonatomic, copy, nullable) NSArray *data;
+@property (nonatomic, copy, nullable) NSArray *args;
 
-@property (nonatomic, copy) NSString* event;
-@property (nonatomic, readonly) NSString* description;
+@property (nonatomic, copy, nullable) NSString* event;
+@property (nonatomic, readonly, nonnull) NSString* description;
 
-+ (void)findType:(NSInteger)binCount ack:(Boolean)ack;
++ (PacketType)findType:(int)binCount ack:(BOOL)ack;
 
-- (SocketPacket*) init:(PacketType)type nsp:(NSString *)nsp;
+- (nonnull instancetype) init:(PacketType)type nsp:(nonnull NSString *)nsp;
 
-- (SocketPacket*) init:(PacketType)type nsp:(NSString *)nsp placeholders:(NSInteger)placeholders;
+- (nonnull instancetype) init:(PacketType)type nsp:(nonnull NSString *)nsp placeholders:(NSInteger)placeholders;
 
-- (SocketPacket*) init:(PacketType)type data:(NSArray *)data id:(NSInteger)id nsp:(NSString *)nsp
-    placeholders:(NSInteger)placeholders binary:(NSData *) binary;
+- (nonnull instancetype) initWithData:(PacketType)type data:(nonnull NSArray*)data id:(NSInteger)id nsp:(nullable NSString *)nsp
+    placeholders:(NSInteger)placeholders binary:(nullable NSData *) binary;
+
++ (nonnull instancetype) packetFromEmit:(nullable NSArray*) items id:(NSInteger)id nsp:(nullable NSString*)nsp ack:(BOOL) ack;
 
 @end

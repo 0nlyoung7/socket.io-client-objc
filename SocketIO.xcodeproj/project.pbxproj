@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A0105081E60166F00D6ED5D /* SocketAckEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0105071E60166F00D6ED5D /* SocketAckEmitter.m */; };
 		1A523B061E46C42E009D689F /* SocketIOClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A523B051E46C42E009D689F /* SocketIOClient.m */; };
 		1A523B341E46D5D1009D689F /* SocketIOClientSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A523B331E46D5D1009D689F /* SocketIOClientSpec.m */; };
 		1A523B361E46DA45009D689F /* SocketParsable.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A523B351E46DA45009D689F /* SocketParsable.m */; };
@@ -30,6 +31,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1A0105071E60166F00D6ED5D /* SocketAckEmitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketAckEmitter.m; sourceTree = "<group>"; };
 		1A523B041E46C406009D689F /* SocketIOClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketIOClient.h; sourceTree = "<group>"; };
 		1A523B051E46C42E009D689F /* SocketIOClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketIOClient.m; sourceTree = "<group>"; };
 		1A523B071E46C5E2009D689F /* SocketEngineClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketEngineClient.h; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				1A523B581E4E937A009D689F /* SocketAckEmitter.h */,
+				1A0105071E60166F00D6ED5D /* SocketAckEmitter.m */,
 				1A523B041E46C406009D689F /* SocketIOClient.h */,
 				1A523B051E46C42E009D689F /* SocketIOClient.m */,
 				1A523B071E46C5E2009D689F /* SocketEngineClient.h */,
@@ -176,6 +179,7 @@
 				1A572A641E53D9CD0089FE80 /* WebSocket.m in Sources */,
 				1A572A5F1E51A9AC0089FE80 /* SocketEngineSpec.m in Sources */,
 				1A523B341E46D5D1009D689F /* SocketIOClientSpec.m in Sources */,
+				1A0105081E60166F00D6ED5D /* SocketAckEmitter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

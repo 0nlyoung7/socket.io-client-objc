@@ -1,6 +1,8 @@
 #import <Foundation/Foundation.h>
 #import <Security/Security.h>
 
+#import "SSLSecurity.h"
+
 typedef NS_ENUM(NSInteger, SocketIOClientStatus) {
     NotConnected = 0,
     Disconnected = 1,
@@ -31,7 +33,7 @@ typedef NS_ENUM(NSInteger, SocketIOClientStatus) {
 @property (nonatomic, assign) NSInteger reconnectWait;
 
 @property (nonatomic, assign) BOOL secure;
-//@property (nonatomic, copy) SSLSecurity *security;
+@property (nonatomic, copy) SSLSecurity *security;
 @property (nonatomic, assign) BOOL selfSigned;
 
 //@property (nonatomic, copy) NSURLSessionDelegate *sessionDelegate;
