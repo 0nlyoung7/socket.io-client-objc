@@ -29,6 +29,8 @@
 
 @property (nonatomic) BOOL websocket;
 
+-(void) send:(NSString*) msg withData:(NSData*) datas;
+
 
 @optional
 - (void) connect;

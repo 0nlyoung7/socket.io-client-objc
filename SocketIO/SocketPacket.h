@@ -26,6 +26,7 @@ typedef NS_ENUM(NSInteger, PacketType) {
 
 @property (nonatomic, copy, nullable) NSString* event;
 @property (nonatomic, readonly, nonnull) NSString* description;
+@property (nonatomic, readonly, nonnull) NSString* packetString;
 
 + (PacketType)findType:(int)binCount ack:(BOOL)ack;
 
