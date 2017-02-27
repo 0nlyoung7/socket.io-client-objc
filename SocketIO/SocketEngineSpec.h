@@ -10,36 +10,38 @@
 @property (nonatomic) BOOL connected;
 @property (nonatomic) NSDictionary *connectParams;
 @property (nonatomic) BOOL doubleEncodeUTF8;
-@property (nonatomic) NSDictionary *cookies;
+@property (nonatomic) NSArray<NSHTTPCookie *> *cookies;
 @property (nonatomic) NSDictionary *extraHeaders;
 
 @property (nonatomic) BOOL fastUpgrade;
 @property (nonatomic) BOOL forcePolling;
 @property (nonatomic) BOOL forceWebsockets;
+@property (nonatomic, strong, nullable) dispatch_queue_t parseQueue;
+
 
 @property (nonatomic) BOOL polling;
 @property (nonatomic) BOOL probing;
 
-@property (nonatomic) NSString *sid;
-@property (nonatomic) NSString *socketPath;
-@property (nonatomic) NSURL *urlPolling;
-@property (nonatomic) NSURL *urlWebSocket;
+@property (nonatomic, nullable) NSString *sid;
+@property (nonatomic, nullable) NSString *socketPath;
+@property (nonatomic, nullable) NSURL *urlPolling;
+@property (nonatomic, nullable) NSURL *urlWebSocket;
 
-@property (nonatomic, readonly) NSURL *urlPollingWithSid;
+@property (nonatomic, readonly, nullable) NSURL *urlPollingWithSid;
 
 @property (nonatomic) BOOL websocket;
 
--(void) send:(NSString*) msg withData:(NSData*) datas;
+-(void) send:(NSString *_Nullable) msg withData:(NSData *_Nullable) datas;
 
 
 @optional
 - (void) connect;
-- (void) didError:(NSString*) reason;
-- (void) disconnect:(NSString*) reason;
+- (void) didError:(NSString *_Nullable) reason;
+- (void) disconnect:(NSString *_Nullable) reason;
 - (void) doFastUpgrade;
 - (void) flushWaitingForPostToWebSocket;
-- (void) parseEngineData:(NSData*) data;
-- (void) parseEngineMessage:(NSString*) message fromPolling:(BOOL)fromPolling;
+- (void) parseEngineData:(NSData *_Nonnull) data;
+- (void) parseEngineMessage:(NSString *_Nonnull) message fromPolling:(BOOL)fromPolling;
 - (void) write:(NSString *_Nonnull) msg withType:(enum SocketEnginePacketType)type withData:(NSArray<NSData*> *_Nonnull) data;
 @end
 
