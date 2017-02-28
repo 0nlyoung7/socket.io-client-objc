@@ -15,5 +15,7 @@
 
 - (NSString*) readUntilOccurence:(NSString *) keyword;
 
+- (int) indexOf:(NSString *) keyword;
+
 
 @end

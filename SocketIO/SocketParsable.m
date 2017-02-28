@@ -118,7 +118,7 @@
     
     ParseArrayResult parseArrayResult = [self parseData:dataArray];
     if( parseArrayResult.array ){
-        SocketPacket *socketPacket = [[SocketPacket alloc] init:type data:parseArrayResult.array id:-1 nsp:namespace placeholders:placeholders binary:nil];
+        SocketPacket *socketPacket = [[SocketPacket alloc] initWithData:type data:parseArrayResult.array id:-1 nsp:namespace placeholders:placeholders binary:nil];
         parseResult.socketPacket = socketPacket;
     } else {
         parseResult.message = parseArrayResult.message;

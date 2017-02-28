@@ -28,6 +28,10 @@
     return com.URL;
 }
 
+-(void) createBinaryDataForSend:(NSData*) data{
+    //TODO impl this
+}
+
 -(void) send:(NSString*) msg withData:(NSData*) datas{
     NSArray *dataArray = [[NSArray alloc] initWithObjects:datas, nil];
     [self write:msg withType:Message withData:dataArray];

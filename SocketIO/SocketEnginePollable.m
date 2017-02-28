@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "SocketEnginePollable.h"
+#import "SocketStringReader.h"
 
 @implementation SocketEnginePollable : NSObject
 {
@@ -72,8 +73,7 @@
            NSString* str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
            
            dispatch_async(weakSelf.parseQueue ,^{
-               // TODO
-               //[self parsePollingMessage:str];
+               [self parsePollingMessage:str];
            });
            
            
@@ -86,6 +86,53 @@
            }
        }
     ];
+}
+
+-(void) parsePollingMessage:(NSString*) str{
+    if( str.length == 1 ){
+        SocketStringReader *reader = [[SocketStringReader alloc] init:str];
+        while( reader.hasNext ){
+            NSString *str = [reader readUntilOccurence:@":"];
+            int n = [reader indexOf:@":"];
+            
+            if( n >= 0 ){
+                dispatch_async(self.handleQueue ,^{
+                    [self parseEngineMessage:str fromPolling: true];
+                });
+            } else {
+                dispatch_async(self.handleQueue ,^{
+                    [self parseEngineMessage:str fromPolling: true];
+                });
+                break;
+            }
+        }
+    }
+}
+
+-(void) sendPollMessage:(NSString*) message type:(SocketEnginePacketType)type withData:(NSArray<NSData*> *) datas{
+    NSString *fixedMessage = @"";
+    
+    if( self.doubleEncodeUTF8 ){
+        // TODO
+        //fixedMessage = [self doubleEncodeUTF8:message];
+    } else {
+        fixedMessage = message;
+    }
+    
+   NSString *typeStr = [NSString stringWithFormat: @"%ld", (long)type];
+   [self.postWait addObject:[typeStr stringByAppendingString:fixedMessage] ];
+    
+    for (id data in datas) {
+        //TODO
+    }
+}
+
+-(void) stopPolling {
+    self.waitingForPoll = FALSE;
+    self.waitingForPost = FALSE;
+    if( self.session != NULL ){
+        [self.session finishTasksAndInvalidate];
+    }
 }
 
 @end

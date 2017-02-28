@@ -13,7 +13,7 @@
 
 -(void) doPoll;
 
--(void) sendPollMessage:(NSString*) message type:(SocketEnginePacketType)type withData:(NSArray<NSData*> *) withData;
+-(void) sendPollMessage:(NSString*) message type:(SocketEnginePacketType)type withData:(NSArray<NSData*> *) datas;
 
 -(void) stopPolling;
 

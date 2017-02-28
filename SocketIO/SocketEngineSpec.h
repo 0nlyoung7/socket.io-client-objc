@@ -22,6 +22,9 @@
 @property (nonatomic) BOOL polling;
 @property (nonatomic) BOOL probing;
 
+@property (nonatomic, strong, nullable) dispatch_queue_t emitQueue;
+@property (nonatomic, strong, nullable) dispatch_queue_t handleQueue;
+
 @property (nonatomic, nullable) NSString *sid;
 @property (nonatomic, nullable) NSString *socketPath;
 @property (nonatomic, nullable) NSURL *urlPolling;
