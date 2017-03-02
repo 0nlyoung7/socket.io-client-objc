@@ -7,7 +7,8 @@
     
 }
 
--(void) addHeader:(NSMutableURLRequest*) req {
+-(void) addHeader:(NSMutableURLRequest*) req
+{
     if( self.cookies != NULL ){
         NSDictionary<NSString *, NSString *> *headers = [NSHTTPCookie requestHeaderFieldsWithCookies:self.cookies];
         req.allHTTPHeaderFields = headers;
@@ -20,6 +21,35 @@
         }
         
     }
+}
+
+-(NSMutableURLRequest*) createRequestForPostWithPostWait
+{
+    NSString *postStr = @"";
+    
+    for( NSString* key in self.postWait){
+        NSString *dataItem = [NSString stringWithFormat:@"%d:%@", (int)[key length], key];
+        [postStr stringByAppendingString:dataItem];
+    }
+    
+    NSData *postData = [postStr dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
+    NSString *postLength = [NSString stringWithFormat:@"%d", (int)[postData length]];
+    
+    
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:self.urlPollingWithSid];
+    [self addHeader:req];
+    
+    [req setHTTPMethod:@"POST"];
+    
+    [req setValue:@"text/plain; charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
+    
+    [req setHTTPBody:postData];
+    [req setValue:postLength forHTTPHeaderField:@"Content-Length"];
+    
+    [self.postWait removeAllObjects];
+    
+    return req;
+    
 }
 
 -(void) doRequest:(NSMutableURLRequest*) req callbackWith:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)) callback{
