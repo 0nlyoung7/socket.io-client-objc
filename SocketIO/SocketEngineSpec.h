@@ -36,6 +36,7 @@
 
 -(void) send:(NSString *_Nullable) msg withData:(NSData *_Nullable) datas;
 
+-(struct BinaryContainer) createBinaryDataForSend:(NSData *_Nullable) data;
 
 @optional
 - (void) connect;

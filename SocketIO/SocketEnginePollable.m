@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "SocketEnginePollable.h"
 #import "SocketStringReader.h"
+#import "SocketTypes.h"
 
 @implementation SocketEnginePollable : NSObject
 {
@@ -52,18 +53,6 @@
     
 }
 
--(void) doRequest:(NSMutableURLRequest*) req callbackWith:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)) callback{
-    
-    if( !self.polling || self.closed || self.invalidated || self.fastUpgrade ) {
-        
-    } else {
-        
-        [ [self.session dataTaskWithRequest:req completionHandler:callback] resume ];
-        
-    }
-    
-}
-
 -(void) doPoll {
     if (self.websocket || self.waitingForPoll || !self.connected || self.closed ){
         
@@ -77,8 +66,20 @@
     }
 }
 
+-(void) doRequest:(NSMutableURLRequest*) req callbackWith:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)) callback{
+    
+    if( !self.polling || self.closed || self.invalidated || self.fastUpgrade ) {
+        
+    } else {
+        
+        [ [self.session dataTaskWithRequest:req completionHandler:callback] resume ];
+        
+    }
+    
+}
+
 -(void) doLongPoll:(NSMutableURLRequest*) req {
-    //TODO
+    
     __weak typeof(self) weakSelf = self;
     
     [self doRequest:req
@@ -106,8 +107,7 @@
                [self parsePollingMessage:str];
            });
            
-           
-           weakSelf.waitingForPoll = false;
+           [weakSelf setWaitingForPoll:FALSE];
            
            if( weakSelf.fastUpgrade ){
                [self doFastUpgrade];
@@ -116,6 +116,51 @@
            }
        }
     ];
+}
+
+-(void) flushWaitingForPost{
+    if ( self.websocket ){
+        [self flushWaitingForPostToWebSocket];
+    } else if( self.postWait.count != 0 && self.connected  ){
+        NSMutableURLRequest* req = [self createRequestForPostWithPostWait];
+        
+        [self setWaitingForPost:TRUE];
+        
+        __weak typeof(self) weakSelf = self;
+        
+        [self doRequest:req
+           callbackWith:^(NSData *data, NSURLResponse *res, NSError *err) {
+               
+               if( weakSelf == NULL ){
+                   return;
+               }
+               
+               if( err != NULL ){
+                   
+                   if( weakSelf.polling ){
+                       NSString *errorMsg = @"Error";
+                       if( err.localizedDescription != NULL ){
+                           errorMsg = err.localizedDescription;
+                       }
+                       
+                       [self didError:errorMsg];
+                   }
+                   
+                   return;
+               }
+               
+               
+               [weakSelf setWaitingForPost:FALSE];
+               
+               dispatch_async(weakSelf.emitQueue ,^{
+                   if( ! weakSelf.fastUpgrade ){
+                       [self flushWaitingForPost];
+                       [self doPoll];
+                   }
+               });
+           }
+         ];
+    }
 }
 
 -(void) parsePollingMessage:(NSString*) str{
@@ -152,8 +197,17 @@
    NSString *typeStr = [NSString stringWithFormat: @"%ld", (long)type];
    [self.postWait addObject:[typeStr stringByAppendingString:fixedMessage] ];
     
-    for (id data in datas) {
-        //TODO
+    for (NSData *data in datas) {
+        
+        BinaryContainer bc = [self createBinaryDataForSend:data];
+        if( !bc.string ){
+            [self.postWait addObject:bc.string];
+        }
+
+    }
+    
+    if( !self.waitingForPost){
+        [self flushWaitingForPost];
     }
 }
 
