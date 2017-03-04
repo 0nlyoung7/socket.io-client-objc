@@ -1,5 +1,12 @@
 
 #import "SocketPacket.h"
+#import "SocketAckEmitter.h"
+
+typedef void(^AckCallback)(id args);
+
+typedef void(^NormalCallback)(id args, SocketAckEmitter* ackEmitter);
+
+typedef void(^OnAckCallback)(int timeoutAfter, AckCallback callback);
 
 typedef struct ParseResult {
     __unsafe_unretained NSString *message;

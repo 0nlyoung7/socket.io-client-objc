@@ -5,7 +5,7 @@
     
 }
 
-- (instancetype)initWithSocket:(SocketIOClient*) socket ackNum:(NSInteger)ackNum{
+- (instancetype)initWithAckNum:(SocketIOClient*) socket ackNum:(int)ackNum{
     if(self = [super init]) {
         self.socket = socket;
         self.ackNum = ackNum;
@@ -14,7 +14,6 @@
 }
 
 -(void) with:(NSArray*) items{
-    //[self.socket emitAck:self.ackNum with:items]
+    [self.socket emitAck:self.ackNum with:items];
 }
-
 @end
