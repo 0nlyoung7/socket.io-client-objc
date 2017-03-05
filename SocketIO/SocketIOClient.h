@@ -4,6 +4,8 @@
 #import "SocketIOClientStatus.h"
 #import "SocketParsable.h"
 #import "SocketEngineSpec.h"
+#import "SocketPacket.h"
+#import "SocketAnyEvent.h"
 
 @interface SocketIOClient : NSObject<SocketEngineClient, SocketParsable>
 
@@ -19,17 +21,22 @@
 
 @property (nonatomic) int reconnectWait;
 
-@property(nonatomic, strong, nullable) dispatch_queue_t parseQueue;
-
-
-@property (nonatomic) int currentReconnectAttempt;
-@property (nonatomic) BOOL reconnecting;
-
-@property(nonatomic, strong, nullable)dispatch_queue_t handleQueue;
-@property(nonatomic) BOOL reconnectAttempts;
 
 @property(nonatomic, strong, nullable) dispatch_queue_t ackQueue;
 @property(nonatomic, strong, nullable) dispatch_queue_t emitQueue;
+@property(nonatomic, strong, nullable) dispatch_queue_t parseQueue;
+
+
+@property(nonatomic, strong, nullable) void(^anyHandler)(SocketAnyEvent* _Nullable);
+@property (nonatomic) int currentReconnectAttempt;
+
+//@property(nonatomic, strong, nullable) NSMutableArray<SocketEventHandler*> handlers;
+
+@property (nonatomic) BOOL reconnecting;
+@property (nonatomic, copy, nonnull) NSMutableArray<SocketPacket*> *waitingPackets;
+
+@property(nonatomic, strong, nullable)dispatch_queue_t handleQueue;
+@property(nonatomic) BOOL reconnectAttempts;
 
 - (void)emitAck:(int)ack with:(nullable NSArray*) items;
 

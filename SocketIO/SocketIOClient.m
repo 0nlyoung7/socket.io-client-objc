@@ -49,4 +49,53 @@
     });
 }
 
+-(void) engineDidClose:(NSString*)reason{
+    [self.waitingPackets removeAllObjects];
+    
+    if( self.status != Disconnected ){
+        [self setStatus:NotConnected];
+    }
+    
+    if ( self.status != Disconnected || ! self.reconnects ) {
+        //
+    }
+}
+
+-(void) didDisconnect:(NSString*)reason {
+    if( self.status == Disconnected ){
+        return;
+    }
+    
+    [self setReconnecting:FALSE];
+    [self setStatus:Disconnected];
+    
+    if( self.engine != NULL ){
+        [self.engine disconnect:reason];
+    }
+    
+    NSArray *data = @[reason];
+    [self handleEvent:@"disconnect" data:data isInternalMessage:TRUE];
+}
+
+-(void) handleEvent:(NSString*)event data:(NSArray *)data isInternalMessage:(Boolean)isInternalMessage {
+    [self handleEvent:event data:data isInternalMessage:isInternalMessage withAck:-1];
+    
+}
+
+-(void) handleEvent:(NSString*)event data:(NSArray *)data isInternalMessage:(Boolean)isInternalMessage withAck:(NSInteger)withAck{
+    if( self.status != Connected && !isInternalMessage ){
+        return;
+    }
+    
+    dispatch_async(self.handleQueue ,^{
+        if( self.anyHandler ){
+            SocketAnyEvent *socketAnyEvent = [[SocketAnyEvent alloc] init:event items:data];
+            self.anyHandler(socketAnyEvent);
+        }
+        
+        //TODO Handler
+        
+    });
+}
+
 @end
