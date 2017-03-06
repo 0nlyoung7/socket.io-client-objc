@@ -35,8 +35,9 @@
 @property (nonatomic) BOOL reconnecting;
 @property (nonatomic, copy, nonnull) NSMutableArray<SocketPacket*> *waitingPackets;
 
+@property(nonatomic) int currentAck;
 @property(nonatomic, strong, nullable)dispatch_queue_t handleQueue;
-@property(nonatomic) BOOL reconnectAttempts;
+@property(nonatomic) int reconnectAttempts;
 
 - (void)emitAck:(int)ack with:(nullable NSArray*) items;
 

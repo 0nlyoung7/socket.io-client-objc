@@ -1,5 +1,8 @@
+#import <UIKit/UIKit.h>
+
 #import "SocketIOClient.h"
 #import "SocketPacket.h"
+
 
 @implementation SocketIOClient
 {
@@ -14,6 +17,9 @@
         //set default value;
         self.nsp = @"/";
         self.reconnectWait = 10;
+   
+        self.currentAck = -1;
+        self.reconnectAttempts = -1;
         
         self.socketURL = url;
         self.config = config;
@@ -29,6 +35,8 @@
                self.forceNew  = config[@"forceNew"];
            }
         }
+        
+        
         
         [self.config setObject:[NSNumber numberWithBool:YES] forKey:@"secure"];
     }
@@ -57,7 +65,10 @@
     }
     
     if ( self.status != Disconnected || ! self.reconnects ) {
-        //
+        [self didDisconnect:reason];
+    } else if( !self.reconnecting ){
+        [self setReconnecting:TRUE];
+        [self tryReconnect:reason];
     }
 }
 
@@ -95,6 +106,40 @@
         
         //TODO Handler
         
+    });
+}
+
+-(void) tryReconnect:(NSString*) reason{
+    if( !self.reconnecting ){
+        return;
+    }
+    
+    [self handleEvent:@"reconnect" data:@[reason] isInternalMessage:TRUE];
+    [self _tryReconnect];
+}
+
+-(void) _tryReconnect{
+    if( !self.reconnecting ){
+        return;
+    }
+    
+    if( (self.reconnectAttempts != -1 && self.currentReconnectAttempt + 1 > self.reconnectAttempts) || !self.reconnects ){
+       [self didDisconnect:@"Reconnect Failed"];
+       return;
+    }
+    
+    
+    NSArray *data = @[[NSString stringWithFormat:@"%d", (self.reconnectAttempts - self.currentReconnectAttempt)]];
+    [self handleEvent:@"reconnectAttempt" data:data isInternalMessage:TRUE];
+    
+    self.currentReconnectAttempt += 1;
+    
+    //TODO connect
+    
+    CGFloat deadlinePlus = (CGFloat) (self.reconnectWait * NSEC_PER_SEC) / NSEC_PER_SEC;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, deadlinePlus), dispatch_get_main_queue(), ^{
+        [self _tryReconnect];
     });
 }
 
