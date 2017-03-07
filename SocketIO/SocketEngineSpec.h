@@ -1,11 +1,13 @@
 #import <Foundation/Foundation.h>
 #import "SocketEngineClient.h"
 #import "SocketEnginePacketType.h"
+#import "WebSocket.h"
+
 
 
 @protocol SocketEngineSpec <NSObject>
 
-@property (nonatomic, weak) SocketEngineClient *client;
+@property (nonatomic, weak, nullable) SocketEngineClient *client;
 @property (nonatomic) BOOL closed;
 @property (nonatomic) BOOL connected;
 @property (nonatomic) NSDictionary *connectParams;
@@ -33,6 +35,7 @@
 @property (nonatomic, readonly, nullable) NSURL *urlPollingWithSid;
 
 @property (nonatomic) BOOL websocket;
+@property (nonatomic, copy, nullable) WebSocket *ws;
 
 -(void) send:(NSString *_Nullable) msg withData:(NSData *_Nullable) datas;
 

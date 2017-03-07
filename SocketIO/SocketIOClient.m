@@ -2,6 +2,7 @@
 
 #import "SocketIOClient.h"
 #import "SocketPacket.h"
+#import "SocketEngine.h"
 
 
 @implementation SocketIOClient
@@ -41,6 +42,11 @@
         [self.config setObject:[NSNumber numberWithBool:YES] forKey:@"secure"];
     }
     return self;
+}
+
+- (SocketEngine*) addEngine{
+    SocketEngine *engine = [[SocketEngine alloc] init];
+    return engine;
 }
 
 - (void)emitAck:(int)ack with:(nullable NSArray*) items{

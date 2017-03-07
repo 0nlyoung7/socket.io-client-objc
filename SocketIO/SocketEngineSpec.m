@@ -3,7 +3,7 @@
 
 @implementation SocketEngineSpec : NSObject 
 {
-    }
+}
 
 - (NSURL*) urlPollingWithSid
 {
@@ -29,7 +29,6 @@
 }
 
 -(BinaryContainer) createBinaryDataForSend:(NSData*) data{
-    //TODO impl this
     struct BinaryContainer binaryContainer;
     if( self.websocket ){
         

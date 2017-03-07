@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "SocketEngineSpec.h"
 
-@interface SocketEnginePollable : NSObject<SocketEngineSpec>
+@protocol SocketEnginePollable <NSObject>
 
 @property (nonatomic, readonly) BOOL invalidated;
 
@@ -16,5 +16,9 @@
 -(void) sendPollMessage:(NSString*) message type:(SocketEnginePacketType)type withData:(NSArray<NSData*> *) datas;
 
 -(void) stopPolling;
+
+@end
+
+@interface SocketEnginePollable : NSObject <SocketEngineSpec, SocketEnginePollable>
 
 @end

@@ -21,12 +21,12 @@
 @interface WebSocket : NSObject <NSStreamDelegate>
     
 typedef NS_ENUM(uint8_t, OpCode) {
-    ContinueFrame = 0x0,
+    OpContinueFrame = 0x0,
     TextFrame = 0x1,
     BinaryFrame = 0x2,
     ConnectionClose = 0x8,
-    Ping = 0x8,
-    Pong = 0xA
+    OpPing = 0x8,
+    OpPong = 0xA
 };
 
 typedef NS_ENUM(uint16_t, CloseCode) {
