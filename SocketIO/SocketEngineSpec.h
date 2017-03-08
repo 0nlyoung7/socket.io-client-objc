@@ -10,10 +10,10 @@
 @property (nonatomic, weak, nullable) SocketEngineClient *client;
 @property (nonatomic) BOOL closed;
 @property (nonatomic) BOOL connected;
-@property (nonatomic) NSDictionary *connectParams;
+@property (nonatomic, nullable) NSDictionary *connectParams;
 @property (nonatomic) BOOL doubleEncodeUTF8;
-@property (nonatomic) NSArray<NSHTTPCookie *> *cookies;
-@property (nonatomic) NSDictionary *extraHeaders;
+@property (nonatomic, nullable) NSArray<NSHTTPCookie *> *cookies;
+@property (nonatomic, nullable) NSDictionary *extraHeaders;
 
 @property (nonatomic) BOOL fastUpgrade;
 @property (nonatomic) BOOL forcePolling;
