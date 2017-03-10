@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "SocketEngine.h"
 #import "SocketEnginePacketType.h"
+#import "SocketTypes.h"
 
 @implementation SocketEngine
 {
@@ -53,10 +54,10 @@
     }
     
     if( self.websocket ){
-        // sendWebSocketMessage
+        [self sendWebSocketMessage:@"" withType:Close withData:@[]];
         [self closeOutEngine:reason];
     } else {
-        // disconnectPolling
+        [self disconnectPolling:reason];
     }
 }
 
@@ -69,6 +70,59 @@
         [self doRequest:req callbackWith:nil];
         [self closeOutEngine:reason];
     });
+}
+
+-(void) doFastUpgrade {
+    if (self.waitingForPoll){
+        NSLog(@"Outstanding poll when switched to WebSockets, we'll probably disconnect soon. You should report this");
+    }
+    
+    [self sendWebSocketMessage:@"" withType:Upgrade withData:@[]];
+    [self setWebsocket:TRUE];
+    [self setPolling:FALSE];
+    [self setFastUpgrade:FALSE];
+    [self setProbing:FALSE];
+    
+    [self flushProbeWait];
+
+}
+
+-(void) flushProbeWait {
+    dispatch_async(self.emitQueue ,^{
+        for( Probe *waiter in self.probeWait ){
+            [self write:waiter.msg withType:waiter.type withData:waiter.data];
+        }
+        
+        [self.probeWait removeAllObjects];
+        
+        if( self.postWait.count != 0 ){
+            [self flushWaitingForPostToWebSocket];
+        }
+    });
+}
+
+-(void)flushWaitingForPostToWebSocket {
+    if( !self.ws ){
+        return;
+    }
+    
+    for( NSString *msg in self.postWait ){
+        [self.ws writeString:msg];
+    }
+    
+    [self.postWait removeAllObjects];
+}
+
+-(void)handleClose:(NSString*) reason {
+    if( self.client ){
+        [self.client engineDidClose:reason];
+    }
+}
+
+-(void)handleMessage:(NSString*) message {
+    if( self.client ){
+        [self.client parseEngineMessage:message];
+    }
 }
 
 - (void) closeOutEngine:(NSString*) reason{
@@ -99,6 +153,10 @@
     }
     
     return json;
+}
+
+- (void) write:(NSString*) msg withType:(SocketEnginePacketType)type withData:(NSArray<NSData *> * _Nonnull)data{
+    // TODO Impl
 }
 
 @end

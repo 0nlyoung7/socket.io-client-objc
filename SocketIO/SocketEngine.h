@@ -3,6 +3,7 @@
 
 #import "SocketEnginePollable.h"
 #import "SocketEngineWebsocket.h"
+#import "SocketTypes.h"
 
 @interface SocketEngine: NSObject<NSURLSessionDelegate, SocketEnginePollable, SocketEngineWebsocket>
 
@@ -41,6 +42,8 @@
 
 
 @property (nonatomic, nullable) NSURL *url;
+
+@property (nonatomic, nullable) ProbeWaitQueue* probeWait;
 
 @property (nonatomic, readonly, nullable) NSURL *urlPollingWithSid;
 
