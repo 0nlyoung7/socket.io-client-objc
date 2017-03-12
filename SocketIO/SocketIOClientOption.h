@@ -36,7 +36,9 @@ typedef NS_ENUM(NSInteger, SocketIOClientStatus) {
 @property (nonatomic, copy) SSLSecurity *security;
 @property (nonatomic, assign) BOOL selfSigned;
 
-@property (nonatomic) NSURLSessionDelegate *sessionDelegate;
+@property(nonatomic,weak, nullable)id<NSURLSessionDelegate> sessionDelegate;
+
+
 @property (nonatomic, assign) BOOL voipEnabled;
 
 @end

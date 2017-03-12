@@ -5,7 +5,7 @@
 #import "SocketEngineWebsocket.h"
 #import "SocketTypes.h"
 
-@interface SocketEngine: NSObject<NSURLSessionDelegate, SocketEnginePollable, SocketEngineWebsocket>
+@interface SocketEngine: NSObject<SocketEnginePollable, SocketEngineWebsocket>
 
 @property (nonatomic, strong, nullable) dispatch_queue_t emitQueue;
 @property (nonatomic, strong, nullable) dispatch_queue_t handleQueue;
@@ -29,7 +29,7 @@
 @property (nonatomic) BOOL invalidated;
 @property (nonatomic) BOOL polling;
 @property (nonatomic) BOOL probing;
-@property (nonatomic, copy, readonly, nullable) NSURLSession *session;
+@property (nonatomic, copy, nullable) NSURLSession *session;
 @property (nonatomic, nullable) NSString *sid;
 @property (nonatomic, nullable) NSString *socketPath;
 @property (nonatomic, nullable) NSURL *urlPolling;
@@ -38,8 +38,7 @@
 @property (nonatomic, copy, nullable) WebSocket *ws;
 
 @property (nonatomic, weak, nullable) SocketEngineClient *client;
-//@property (nonatomic, weak, nullable) NSURLSessionDelegate *client;
-
+@property(nonatomic,weak, nullable)id<NSURLSessionDelegate> sessionDelegate;
 
 @property (nonatomic, nullable) NSURL *url;
 

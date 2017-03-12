@@ -140,6 +140,38 @@
     }
 }
 
+-(void) connect{
+    if( self.connected ){
+        [self disconnect:@"reconnet"];
+    }
+    
+    [self resetEngine];
+    
+    if( self.forceWebsockets ){
+        [self setPolling:FALSE];
+        [self setWebsocket:TRUE];
+        
+        [self createWebsocketAndConnect];
+        return;
+    }
+    
+    NSMutableURLRequest *reqPolling = [[NSMutableURLRequest alloc] initWithURL:self.urlPollingWithSid];
+    
+    if( self.cookies != NULL ){
+        NSDictionary<NSString *, NSString *> *headers = [NSHTTPCookie requestHeaderFieldsWithCookies:self.cookies];
+        reqPolling.allHTTPHeaderFields = headers;
+    }
+    
+    if( self.extraHeaders ){
+        for( NSString *headerName in self.extraHeaders ){
+            [reqPolling setValue:self.extraHeaders[headerName] forHTTPHeaderField:headerName];
+        }
+    }
+    
+    //[self doLongPoll:reqPolling];
+    
+}
+
 - (NSDictionary*) toNSDictionary:(NSString*) str{
     
     NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
@@ -157,6 +189,30 @@
 
 - (void) write:(NSString*) msg withType:(SocketEnginePacketType)type withData:(NSArray<NSData *> * _Nonnull)data{
     // TODO Impl
+}
+
+-(void) createWebsocketAndConnect {
+    self.ws = [[WebSocket alloc] initWithURL:self.urlPollingWithSid protocols:NULL];
+}
+
+- (void) resetEngine{
+    
+    self.closed = FALSE;
+    self.connected = FALSE;
+    self.fastUpgrade = FALSE;
+    self.polling = TRUE;
+    self.probing = FALSE;
+    self.invalidated = FALSE;
+    
+    // sessionDelegat
+    NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+    
+    self.session  = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self.sessionDelegate delegateQueue:mainQueue];
+    
+    self.sid = @"";
+    self.waitingForPoll = FALSE;
+    self.waitingForPost = FALSE;
+    self.websocket = FALSE;
 }
 
 @end

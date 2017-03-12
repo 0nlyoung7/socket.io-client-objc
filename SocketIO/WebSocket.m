@@ -123,7 +123,7 @@ static const size_t  MaxFrameSize        = 32;
 }
 
 - (void)writePing:(NSData*)data {
-    [self dequeueWrite:data code:Ping];
+    [self dequeueWrite:data code:OpPing];
 }
 
 - (void)writeData:(NSData*)data {
