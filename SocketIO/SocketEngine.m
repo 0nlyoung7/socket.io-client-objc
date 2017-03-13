@@ -125,6 +125,10 @@
     }
 }
 
+-(void)handleNOOP {
+    [self doPoll];
+}
+
 - (void) closeOutEngine:(NSString*) reason{
     [self setSid:@""];
     [self setClosed:TRUE];
@@ -168,7 +172,7 @@
         }
     }
     
-    //[self doLongPoll:reqPolling];
+    [self doLongPoll:reqPolling];
     
 }
 
@@ -193,6 +197,27 @@
 
 -(void) createWebsocketAndConnect {
     self.ws = [[WebSocket alloc] initWithURL:self.urlPollingWithSid protocols:NULL];
+    
+    if( self.cookies != NULL ){
+        NSDictionary<NSString *, NSString *> *headers = [NSHTTPCookie requestHeaderFieldsWithCookies:self.cookies];
+        for( NSString *key in headers ){
+            [self.ws setValue:headers[key] forKey:key];
+        }
+    }
+    
+    if( self.extraHeaders ){
+        for( NSString *key in self.extraHeaders ){
+            [self.ws setValue:self.extraHeaders[key] forKey:key];
+        }
+    }
+    
+    self.ws.callbackQueue = self.handleQueue;
+    self.ws.voipEnabled = self.voipEnabled;
+    self.ws.delegate = self;
+    self.ws.disableSSLCertValidation = self.selfSigned;
+    self.ws.security = self.security;
+    
+    [self.ws connect];
 }
 
 - (void) resetEngine{
@@ -204,7 +229,6 @@
     self.probing = FALSE;
     self.invalidated = FALSE;
     
-    // sessionDelegat
     NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
     
     self.session  = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self.sessionDelegate delegateQueue:mainQueue];

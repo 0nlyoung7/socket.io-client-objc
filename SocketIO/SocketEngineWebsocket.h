@@ -2,12 +2,12 @@
 #import "SocketEngineSpec.h"
 #import "WebSocket.h"
 
-@protocol SocketEngineWebsocket <NSObject>
+@protocol SocketEngineWebsocket <SocketEngineSpec, WebSocketDelegate>
 
 - (void)sendWebSocketMessage:(NSString*) str withType:(SocketEnginePacketType)type withData:(NSArray*) datas;
 
 @end
 
-@interface SocketEngineWebsocket : NSObject <SocketEngineSpec, WebSocketDelegate>
+@interface SocketEngineWebsocket : NSObject
 
 @end

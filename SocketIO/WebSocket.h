@@ -44,6 +44,10 @@ typedef NS_ENUM(uint16_t, InternalErrorCode) {
     OutputStreamWriteError = 1
 };
 
+
+@property(nonatomic, weak, nullable) dispatch_queue_t callbackQueue;
+
+
 @property(nonatomic,weak, nullable)id<WebSocketDelegate> delegate;
 @property(nonatomic, readonly, nonnull) NSURL *url;
 

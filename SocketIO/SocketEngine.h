@@ -5,7 +5,7 @@
 #import "SocketEngineWebsocket.h"
 #import "SocketTypes.h"
 
-@interface SocketEngine: NSObject<SocketEnginePollable, SocketEngineWebsocket>
+@interface SocketEngine: NSObject<SocketEnginePollable, NSURLSessionDelegate, SocketEngineWebsocket>
 
 @property (nonatomic, strong, nullable) dispatch_queue_t emitQueue;
 @property (nonatomic, strong, nullable) dispatch_queue_t handleQueue;
@@ -45,5 +45,14 @@
 @property (nonatomic, nullable) ProbeWaitQueue* probeWait;
 
 @property (nonatomic, readonly, nullable) NSURL *urlPollingWithSid;
+
+
+@property (nonatomic) NSInteger pongsMissed;
+@property (nonatomic) NSInteger pongsMissedMax;
+
+@property (nonatomic) BOOL secure;
+@property (nonatomic, nullable) SSLSecurity *security;
+@property (nonatomic) BOOL selfSigned;
+@property (nonatomic) BOOL voipEnabled;
 
 @end
