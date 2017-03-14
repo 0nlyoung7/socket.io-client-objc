@@ -42,6 +42,9 @@
 
 @property (nonatomic, nullable) NSURL *url;
 
+@property (nonatomic) double pingInterval;
+@property (nonatomic) double pingTimeout;
+
 @property (nonatomic, nullable) ProbeWaitQueue* probeWait;
 
 @property (nonatomic, readonly, nullable) NSURL *urlPollingWithSid;

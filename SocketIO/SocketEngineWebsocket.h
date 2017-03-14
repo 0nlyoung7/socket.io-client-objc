@@ -6,8 +6,10 @@
 
 - (void)sendWebSocketMessage:(NSString*) str withType:(SocketEnginePacketType)type withData:(NSArray*) datas;
 
+- (void)probeWebSocket;
+
 @end
 
-@interface SocketEngineWebsocket : NSObject
+@interface SocketEngineWebsocket : NSObject <SocketEngineSpec, WebSocketDelegate>
 
 @end

@@ -14,7 +14,7 @@ typedef void(^OnAckCallback)(int timeoutAfter, AckCallback callback);
 
 @property (nonatomic, copy) NSString* msg;
 @property (nonatomic, assign) SocketEnginePacketType type;
-@property (nonatomic, readonly) NSArray* data;
+@property (nonatomic, assign) NSArray* data;
 
 @end
 
