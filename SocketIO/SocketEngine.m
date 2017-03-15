@@ -248,7 +248,7 @@
         [self createWebsocketAndConnect];
     }
     
-    //[self sendPing];
+    [self sendPing];
     
     if( !self.forceWebsockets ){
         [self doPoll];
@@ -257,19 +257,66 @@
     [self.client engineDidOpen:@"Connect"];
 }
 
-- (NSDictionary*) toNSDictionary:(NSString*) str{
+- (void) handlePong:(NSString*) message{
+    self.pongsMissed = 0;
     
-    NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
+    if( [message isEqualToString:@"3probe"] ){
+        [self upgradeTransport];
+    }
+}
+
+- (void) resetEngine{
     
-    NSError *e = nil;
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &e];
+    self.closed = FALSE;
+    self.connected = FALSE;
+    self.fastUpgrade = FALSE;
+    self.polling = TRUE;
+    self.probing = FALSE;
+    self.invalidated = FALSE;
     
-    if (!json) {
-        NSLog(@"Error parsing JSON: %@", e);
-        return nil;;
+    NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+    
+    self.session  = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self.sessionDelegate delegateQueue:mainQueue];
+    
+    self.sid = @"";
+    self.waitingForPoll = FALSE;
+    self.waitingForPost = FALSE;
+    self.websocket = FALSE;
+}
+
+- (void) sendPing{
+    if( !self.connected ) {
+        return;
     }
     
-    return json;
+    if( self.pongsMissed > self.pongsMissedMax ){
+        if( self.client ){
+            [self.client engineDidClose:@"Ping timeout"];
+            return;
+        }
+    }
+    
+    if( !self.pingInterval ){
+        return;
+    }
+    
+    self.pongsMissed += 1;
+    [self write:@"" withType:Ping withData:@[]];
+    
+    __weak typeof(self) weakSelf = self;
+    
+    CGFloat deadlinePlus = (CGFloat) (self.pingInterval * NSEC_PER_SEC) / NSEC_PER_SEC;
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, deadlinePlus), dispatch_get_main_queue(), ^{
+        [weakSelf sendPing];
+    });
+}
+
+- (void) upgradeTransport{
+    if( self.ws && self.ws.isConnected ){
+        self.fastUpgrade = true;
+        [self sendPollMessage:@"" type:Noop withData:@[]];
+    }
 }
 
 - (void) write:(NSString*) msg withType:(SocketEnginePacketType)type withData:(NSArray<NSData *> * _Nonnull)data{
@@ -293,6 +340,7 @@
     });
 }
 
+
 -(void)websocketDidConnect:(WebSocket*) socket{
     if( !self.forceWebsockets ){
         self.probing = true;
@@ -315,23 +363,26 @@
     }
 }
 
-- (void) resetEngine{
+-(void) URLSession:(NSURLSession*)session error:(NSError*) error{
     
-    self.closed = FALSE;
-    self.connected = FALSE;
-    self.fastUpgrade = FALSE;
-    self.polling = TRUE;
-    self.probing = FALSE;
-    self.invalidated = FALSE;
-    
-    NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
-    
-    self.session  = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self.sessionDelegate delegateQueue:mainQueue];
-    
-    self.sid = @"";
-    self.waitingForPoll = FALSE;
-    self.waitingForPost = FALSE;
-    self.websocket = FALSE;
+    [self didError:@"Engine URLSession became invalid"];
 }
+
+
+- (NSDictionary*) toNSDictionary:(NSString*) str{
+    
+    NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
+    
+    NSError *e = nil;
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData: data options: NSJSONReadingMutableContainers error: &e];
+    
+    if (!json) {
+        NSLog(@"Error parsing JSON: %@", e);
+        return nil;;
+    }
+    
+    return json;
+}
+
 
 @end
