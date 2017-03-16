@@ -2,6 +2,8 @@
 #import "SocketEngine.h"
 #import "SocketEnginePacketType.h"
 #import "SocketTypes.h"
+#import "SocketStringReader.h"
+
 
 @implementation SocketEngine
 {
@@ -43,6 +45,18 @@
     if( dict[@"message"] ){
         [self didError:dict[@"message"]];
     }
+}
+
+
+- (void) handleBase64:(NSString*) message{
+    // binary in base64 string
+    /**
+    let noPrefix = message[message.index(message.startIndex, offsetBy: 2)..<message.endIndex]
+    
+    if let data = NSData(base64Encoded: noPrefix, options: .ignoreUnknownCharacters) {
+        client?.parseEngineBinaryData(data as Data)
+    }
+    */
 }
 
 - (void) closeOutEngine:(NSString*) reason{
@@ -262,6 +276,58 @@
     
     if( [message isEqualToString:@"3probe"] ){
         [self upgradeTransport];
+    }
+}
+
+- (void) parseEngineData:(NSData*) data {
+    if( self.client ){
+        NSData *newData = [data subdataWithRange:NSMakeRange(1, [data length])];
+        [self.client parseEngineBinaryData:newData];
+    }
+}
+
+- (void) parseEngineMessage:(NSString*) message fromPolling:(BOOL) fromPolling {
+    SocketStringReader *reader = [[SocketStringReader alloc] init:message];
+    NSString *fixedString;
+    
+    if( [message hasPrefix:@"b4"] ){
+        return [self handleBase64:message];
+    }
+    
+    SocketEnginePacketType type = reader.currentCharacter;
+    if( !type ){
+        [self checkAndHandleEngineError:message];
+        return;
+    }
+    
+    if( fromPolling && type != Noop && self.doubleEncodeUTF8 ){
+        //fixedString = [self fixDoubleUTF8:message];
+    } else {
+        fixedString = message;
+    }
+    
+    switch (type) {
+        case Message:
+            [self handleMessage:[fixedString substringFromIndex:1]];
+            break;
+        case Noop:
+            [self handleNOOP];
+            break;
+            
+        case Pong:
+            [self handlePong:fixedString];
+            break;
+            
+        case Open:
+            [self handleOpen:[fixedString substringFromIndex:1]];
+            break;
+            
+        case Close:
+            [self handleClose:fixedString];
+            break;
+            
+        default:
+            break;
     }
 }
 
