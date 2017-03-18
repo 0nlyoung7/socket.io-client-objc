@@ -17,6 +17,7 @@
 		1A572A4C1E4D75D00089FE80 /* SSLSecurity.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A572A4B1E4D75D00089FE80 /* SSLSecurity.m */; };
 		1A572A5F1E51A9AC0089FE80 /* SocketEngineSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A572A5E1E51A9AC0089FE80 /* SocketEngineSpec.m */; };
 		1A572A641E53D9CD0089FE80 /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A572A631E53D9CD0089FE80 /* WebSocket.m */; };
+		1A924F861E7D1C0D0047B8E7 /* SocketEventHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A924F851E7D1C0D0047B8E7 /* SocketEventHandler.m */; };
 		1A932F7F1E6A9A5E00DD688D /* SocketAckManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A932F7E1E6A9A5E00DD688D /* SocketAckManager.m */; };
 		1A932FBA1E6BE42D00DD688D /* SocketAnyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A932FB91E6BE42D00DD688D /* SocketAnyEvent.m */; };
 		1AAE565A1E64165300CC9490 /* SocketEnginePollable.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AAE56591E64165300CC9490 /* SocketEnginePollable.m */; };
@@ -61,6 +62,8 @@
 		1A572A5E1E51A9AC0089FE80 /* SocketEngineSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketEngineSpec.m; sourceTree = "<group>"; };
 		1A572A621E53D80D0089FE80 /* WebSocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
 		1A572A631E53D9CD0089FE80 /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
+		1A924F841E7D1B500047B8E7 /* SocketEventHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketEventHandler.h; sourceTree = "<group>"; };
+		1A924F851E7D1C0D0047B8E7 /* SocketEventHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketEventHandler.m; sourceTree = "<group>"; };
 		1A932F7D1E6A99D100DD688D /* SocketAckManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketAckManager.h; sourceTree = "<group>"; };
 		1A932F7E1E6A9A5E00DD688D /* SocketAckManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketAckManager.m; sourceTree = "<group>"; };
 		1A932FB81E6BE38D00DD688D /* SocketAnyEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketAnyEvent.h; sourceTree = "<group>"; };
@@ -117,6 +120,8 @@
 				1A572A5E1E51A9AC0089FE80 /* SocketEngineSpec.m */,
 				1A19F7741E6E754E006E6BB3 /* SocketEngineWebsocket.h */,
 				1A19F7751E6E8391006E6BB3 /* SocketEngineWebsocket.m */,
+				1A924F841E7D1B500047B8E7 /* SocketEventHandler.h */,
+				1A924F851E7D1C0D0047B8E7 /* SocketEventHandler.m */,
 				1A523B5A1E4E9AEB009D689F /* SocketEnginePacketType.h */,
 				1AAE56581E63FD1800CC9490 /* SocketEnginePollable.h */,
 				1AAE56591E64165300CC9490 /* SocketEnginePollable.m */,
@@ -208,6 +213,7 @@
 				1A19F7761E6E8391006E6BB3 /* SocketEngineWebsocket.m in Sources */,
 				1A572A5F1E51A9AC0089FE80 /* SocketEngineSpec.m in Sources */,
 				1A523B341E46D5D1009D689F /* SocketIOClientSpec.m in Sources */,
+				1A924F861E7D1C0D0047B8E7 /* SocketEventHandler.m in Sources */,
 				1A932F7F1E6A9A5E00DD688D /* SocketAckManager.m in Sources */,
 				1A0105081E60166F00D6ED5D /* SocketAckEmitter.m in Sources */,
 			);

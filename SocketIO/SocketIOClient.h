@@ -30,7 +30,7 @@
 @property(nonatomic, strong, nullable) void(^anyHandler)(SocketAnyEvent* _Nullable);
 @property (nonatomic) int currentReconnectAttempt;
 
-//@property(nonatomic, strong, nullable) NSMutableArray<SocketEventHandler*> handlers;
+@property(nonatomic, strong, nullable) NSMutableArray<SocketEventHandler*> handlers;
 
 @property (nonatomic) BOOL reconnecting;
 @property (nonatomic, copy, nonnull) NSMutableArray<SocketPacket*> *waitingPackets;

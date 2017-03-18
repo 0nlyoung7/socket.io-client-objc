@@ -49,6 +49,71 @@
     return engine;
 }
 
+- (void) connect {
+   // [self connect:0 withHandler:NULL];
+}
+
+- (void) connect:(int) timeoutAfter withHandler:(void (^)(void))handler {
+    
+    if( self.status == Connected ){
+        NSLog(@"Tried connecting on an already connected socket");
+        return;
+    }
+    
+    self.status = Connecting;
+    
+    if( self.engine == NULL || self.forceNew ){
+        [[self addEngine] connect];
+    } else {
+        if( self.engine ){
+            [self.engine connect];
+        }
+    }
+    
+    if (timeoutAfter == 0 ){
+        return;
+    }
+    
+    
+    CGFloat deadlinePlus = (CGFloat) (timeoutAfter * NSEC_PER_SEC) / NSEC_PER_SEC;
+    
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, deadlinePlus), self.handleQueue, ^{
+        if( weakSelf.status == Connected || weakSelf.status == Disconnected ){
+            return;
+        }
+        
+        weakSelf.status = Disconnected;
+        if( weakSelf ){
+            [weakSelf.engine disconnect:@"Connect timeout"];
+        }
+        
+        if( handler ){
+            handler();
+        }
+        
+    });
+
+}
+
+- (OnAckCallback) createOnAck:(NSArray*) items {
+    self.currentAck += 1;
+
+    __weak typeof(self) weakSelf = self;
+    
+    OnAckCallback cb = ^(int timeoutAfter, AckCallback callback) {
+        dispatch_sync(weakSelf.ackQueue, ^{
+            //TODO
+            //[weakSelf.ackHandlers addAck:ack callback:callback];
+        });
+        
+    };
+    
+    
+    return cb;
+}
+
 - (void)emitAck:(int)ack with:(nullable NSArray*) items{
     
     dispatch_async(self.emitQueue,^{
