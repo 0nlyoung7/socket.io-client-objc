@@ -6,6 +6,8 @@
 #import "SocketEngineSpec.h"
 #import "SocketPacket.h"
 #import "SocketAnyEvent.h"
+#import "SocketEventHandler.h"
+#import "SocketAckManager.h"
 
 @interface SocketIOClient : NSObject<SocketEngineClient, SocketParsable>
 
@@ -30,7 +32,8 @@
 @property(nonatomic, strong, nullable) void(^anyHandler)(SocketAnyEvent* _Nullable);
 @property (nonatomic) int currentReconnectAttempt;
 
-@property(nonatomic, strong, nullable) NSMutableArray<SocketEventHandler*> handlers;
+@property(nonatomic, strong, nullable) NSMutableArray<SocketEventHandler*>* handlers;
+@property(nonatomic, strong, nullable) SocketAckManager *ackHandlers;
 
 @property (nonatomic) BOOL reconnecting;
 @property (nonatomic, copy, nonnull) NSMutableArray<SocketPacket*> *waitingPackets;

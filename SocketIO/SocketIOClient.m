@@ -101,30 +101,97 @@
     self.currentAck += 1;
 
     __weak typeof(self) weakSelf = self;
-    
-    OnAckCallback cb = ^(int timeoutAfter, AckCallback callback) {
+
+    int ack = self.currentAck;
+    OnAckCallback cb = ^(int timeout, AckCallback callback) {
         dispatch_sync(weakSelf.ackQueue, ^{
-            //TODO
-            //[weakSelf.ackHandlers addAck:ack callback:callback];
+            [weakSelf.ackHandlers addAck:ack callback:callback];
         });
         
+        [self _emit:items ack:ack];
+        
+        if( timeout != 0 ){
+            
+            CGFloat deadlinePlus = (CGFloat) (timeout * NSEC_PER_SEC) / NSEC_PER_SEC;
+
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, deadlinePlus), weakSelf.handleQueue, ^{
+                [weakSelf.ackHandlers timeoutAck:ack onQueue:self.handleQueue];
+            });
+        }
     };
     
-    
     return cb;
+}
+
+- (void) didConnect{
+    self.status = Connected;
+    
+    [self handleEvent:@"connect" data:@[] isInternalMessage:false];
+}
+
+-(void) didDisconnect:(NSString*) reason{
+    if ( self.status == Disconnected ){
+        return;
+    }
+    
+    NSLog(@"Disconnected: %@", reason);
+    
+    self.reconnecting = FALSE;
+    self.status = Disconnected;
+    
+    if( self.engine ){
+        [self.engine disconnect:reason];
+    }
+    
+    [self handleEvent:@"disconnect" data:@[reason] isInternalMessage:TRUE];
+}
+
+-(void) disconnect{
+    NSLog(@"Closing socket");
+    [self didDisconnect:@"Disconnect"];
+}
+
+-(void) emit:(NSString*) event items:(NSArray*) items {
+    if( self.status != Connected ){
+        NSString *data = [@"" stringByAppendingFormat:@"Tried emitting %@ when not connected", event];
+        [self handleEvent:@"error" data:@[data] isInternalMessage:TRUE];
+        return;
+    }
+    
+    NSMutableArray *dataArray = [[NSMutableArray alloc] initWithObjects:event, nil];
+    [dataArray arrayByAddingObjectsFromArray:items];
+    [self _emit:dataArray ack:-1];
+}
+
+-(void) _emit:(NSArray*) data ack:(NSInteger)ack {
+    dispatch_async(self.emitQueue,^{
+        if(self.status != Connected){
+            [self handleEvent:@"error" data:@[@"Tried emitting when not connected"] isInternalMessage:TRUE];
+            return;
+        }
+        
+        SocketPacket *packet = [SocketPacket packetFromEmit:data id:ack nsp:self.nsp ack:FALSE];
+        NSString *str = [packet packetString];
+        
+        NSLog(@"Emitting: %@", str);
+        
+        if( self.engine ){
+            [self.engine send:str withData:packet.binary];
+        }
+        
+    });
 }
 
 - (void)emitAck:(int)ack with:(nullable NSArray*) items{
     
     dispatch_async(self.emitQueue,^{
-        if(self.status == Connected){
+        if(self.status != Connected){
             return;
-        } else {
-            SocketPacket *packet = [SocketPacket packetFromEmit:items id:ack nsp:self.nsp ack:TRUE];
-            NSString *str = [packet packetString];
-            
-            [self.engine send:str withData:packet.binary];
         }
+        SocketPacket *packet = [SocketPacket packetFromEmit:items id:ack nsp:self.nsp ack:TRUE];
+        NSString *str = [packet packetString];
+            
+        [self.engine send:str withData:packet.binary];
     });
 }
 
@@ -143,20 +210,22 @@
     }
 }
 
--(void) didDisconnect:(NSString*)reason {
-    if( self.status == Disconnected ){
+-(void) engineDidError:(NSString*)reason{
+    [self handleEvent:@"error" data:@[reason] isInternalMessage:TRUE];
+}
+
+-(void) engineDidOpen:(NSString*)reason{
+    NSLog(@"%@", reason);
+}
+
+-(void) handleAck:(int) ack data:(NSArray*) data{
+    if( self.status != Connected ){
         return;
     }
     
-    [self setReconnecting:FALSE];
-    [self setStatus:Disconnected];
-    
-    if( self.engine != NULL ){
-        [self.engine disconnect:reason];
-    }
-    
-    NSArray *data = @[reason];
-    [self handleEvent:@"disconnect" data:data isInternalMessage:TRUE];
+    dispatch_async(self.handleQueue ,^{
+        [self.ackHandlers executeAck:ack items:data onQueue:self.handleQueue];
+    });
 }
 
 -(void) handleEvent:(NSString*)event data:(NSArray *)data isInternalMessage:(Boolean)isInternalMessage {
