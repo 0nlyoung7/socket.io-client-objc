@@ -37,7 +37,7 @@
 @property (nonatomic) BOOL websocket;
 @property (nonatomic, copy, nullable) WebSocket *ws;
 
--(void) send:(NSString *_Nullable) msg withData:(NSData *_Nullable) datas;
+-(void) send:(NSString *_Nullable) msg withData:(NSArray *_Nullable) datas;
 
 -(struct BinaryContainer) createBinaryDataForSend:(NSData *_Nullable) data;
 

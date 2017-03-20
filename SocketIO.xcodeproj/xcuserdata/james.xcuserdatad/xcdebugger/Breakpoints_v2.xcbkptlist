@@ -965,7 +965,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "123"
             endingLineNumber = "123"
-            landmarkName = "-tryReconnect:"
+            landmarkName = "-createOnAck:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -981,7 +981,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "128"
             endingLineNumber = "128"
-            landmarkName = "-_tryReconnect"
+            landmarkName = "-didConnect"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -997,7 +997,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "136"
             endingLineNumber = "136"
-            landmarkName = "-_tryReconnect"
+            landmarkName = "-didDisconnect:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1045,7 +1045,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "69"
             endingLineNumber = "69"
-            landmarkName = "-closeOutEngine:"
+            landmarkName = "-disconnectPolling:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1206,6 +1206,22 @@
             startingLineNumber = "200"
             endingLineNumber = "200"
             landmarkName = "-engineDidClose:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SocketIO/SocketIOClient.m"
+            timestampString = "511692659.251006"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "264"
+            endingLineNumber = "264"
+            landmarkName = "-leaveNamespace"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

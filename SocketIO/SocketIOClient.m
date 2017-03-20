@@ -163,6 +163,12 @@
     [self _emit:dataArray ack:-1];
 }
 
+-(OnAckCallback) emitWithAck:(NSString*) event items:(NSArray*) items {
+    NSMutableArray *dataArray = [[NSMutableArray alloc] initWithObjects:event, nil];
+    [dataArray arrayByAddingObjectsFromArray:items];
+    return [self createOnAck:dataArray];
+}
+
 -(void) _emit:(NSArray*) data ack:(NSInteger)ack {
     dispatch_async(self.emitQueue,^{
         if(self.status != Connected){
@@ -233,7 +239,7 @@
     
 }
 
--(void) handleEvent:(NSString*)event data:(NSArray *)data isInternalMessage:(Boolean)isInternalMessage withAck:(NSInteger)withAck{
+-(void) handleEvent:(NSString*)event data:(NSArray *)data isInternalMessage:(Boolean)isInternalMessage withAck:(int)withAck{
     if( self.status != Connected && !isInternalMessage ){
         return;
     }
@@ -242,11 +248,32 @@
         if( self.anyHandler ){
             SocketAnyEvent *socketAnyEvent = [[SocketAnyEvent alloc] init:event items:data];
             self.anyHandler(socketAnyEvent);
+            
+            for( SocketEventHandler *handler in self.handlers ){
+                if( handler.event == event ){
+                    [handler executeCallback:data withAck:withAck withSocket:self];
+                }
+            }
         }
-        
-        //TODO Handler
-        
     });
+}
+
+-(void) leaveNamespace{
+    if( ![self.nsp isEqualToString:@"/"] ){
+        if( self.engine ){
+            [self.engine send:[NSString stringWithFormat:@"1(%@)", self.nsp] withData:@[]];
+        }
+    }
+}
+
+-(void) joinNamespace:(NSString*) namespace{
+    self.nsp = namespace;
+    
+    if( ![self.nsp isEqualToString:@"/"] ){
+        if( self.engine ){
+            [self.engine send:[NSString stringWithFormat:@"0(%@)", self.nsp] withData:@[]];
+        }
+    }
 }
 
 -(void) tryReconnect:(NSString*) reason{

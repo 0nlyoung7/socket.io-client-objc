@@ -46,9 +46,8 @@
     return binaryContainer;
 }
 
--(void) send:(NSString*) msg withData:(NSData*) datas{
-    NSArray *dataArray = [[NSArray alloc] initWithObjects:datas, nil];
-    [self write:msg withType:Message withData:dataArray];
+-(void) send:(NSString*) msg withData:(NSArray*) datas{
+    [self write:msg withType:Message withData:datas];
 }
 
 @end
