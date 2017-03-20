@@ -17,6 +17,8 @@ DerivedData/
 !default.perspectivev3
 xcuserdata/
 *.xcuserstate
+*.xcuserstate
+/project.xcworkspace/xcuserdata/
 
 ## Other
 *.moved-aside
@@ -28,6 +30,7 @@ xcuserdata/
 *.ipa
 *.dSYM.zip
 *.dSYM
+*.xcbkptlist
 
 # CocoaPods
 #

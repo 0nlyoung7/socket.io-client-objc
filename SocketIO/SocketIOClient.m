@@ -276,6 +276,32 @@
     }
 }
 
+-(void) off:(NSString*) event{
+    NSArray *filteredHandlers = [self.handlers filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        return ( ![[object event] isEqualToString:event] );
+    }]];
+    
+    self.handlers = [[NSMutableArray alloc] initWithArray:filteredHandlers];
+}
+
+-(void) offById:(NSUUID*) uuid{
+    NSArray *filteredHandlers = [self.handlers filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        return ( ![[object uuid] isEqual:uuid] );
+    }]];
+    
+    self.handlers = [[NSMutableArray alloc] initWithArray:filteredHandlers];
+}
+
+-(NSUUID*) on:(NSString*) event callback:(NormalCallback) callback {
+    
+    SocketEventHandler *handler = [[SocketEventHandler alloc] init];
+    //TODO init handler
+    
+    
+    [self.handlers addObject:handler];
+    return handler.uuid;
+}
+
 -(void) tryReconnect:(NSString*) reason{
     if( !self.reconnecting ){
         return;

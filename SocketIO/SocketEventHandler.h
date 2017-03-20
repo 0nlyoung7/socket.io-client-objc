@@ -1,13 +1,13 @@
 #import <Foundation/Foundation.h>
 #import "SocketTypes.h"
+#import "SocketIOClient.h"
 
 @interface SocketEventHandler: NSObject
-{
-}
 
 @property (nonatomic, nullable) NSString *event;
-@property (nonatomic, nullable) NSUUID *id;
-@property (nonatomic, nullable) NormalCallback callback;
+@property (nonatomic, nullable) NSUUID *uuid;
+@property (nonatomic, copy) NormalCallback callback;
 
-- (void)executeCallback:(NSArray*) items withAck:(int) ack withSocket:(SocketIOClient *_Nonnull) socket;
+- (void)executeCallback:(NSArray *_Nonnull) items withAck:(int) ack withSocket:(SocketIOClient *_Nonnull) socket;
+
 @end

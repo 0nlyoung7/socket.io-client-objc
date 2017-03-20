@@ -4,7 +4,7 @@
 @interface SocketAck : NSObject
 
 @property (nonatomic, assign) int ack;
-@property (nonatomic, copy, nullable) AckCallback callback;
+@property (nonatomic, copy) AckCallback callback;
 
 @end
 
