@@ -296,10 +296,63 @@
     
     SocketEventHandler *handler = [[SocketEventHandler alloc] init];
     //TODO init handler
-    
+    handler.event = event;
+    handler.uuid = [NSUUID init];
+    handler.callback = callback;
     
     [self.handlers addObject:handler];
     return handler.uuid;
+}
+
+-(NSUUID*) once:(NSString*) event callback:(NormalCallback) callback {
+    NSUUID *uuid = [NSUUID init];
+    
+    SocketEventHandler *handler = [[SocketEventHandler alloc] init];
+    //TODO init handler
+    handler.event = event;
+    handler.uuid = uuid;
+    
+    __weak typeof(self) weakSelf = self;
+    
+    NormalCallback onceCb = ^(NSData* data, SocketAckEmitter *ackEmitter) {
+        [weakSelf offById:uuid];
+        callback(data, ackEmitter);
+    };
+    
+    handler.callback = onceCb;
+    
+    [self.handlers addObject:handler];
+    return handler.uuid;
+}
+
+-(void) onAny:(void (^)(SocketAnyEvent*))handler {
+    self.anyHandler = handler;
+}
+
+-(void) parseEngineMessage:(NSString*) msg{
+    dispatch_async(self.parseQueue,^{
+        [self parseSocketMessage:msg];
+    });
+}
+
+-(void) parseEngineBinaryData:(NSData*) data{
+    dispatch_async(self.parseQueue,^{
+        [self parseBinaryData:data];
+    });
+}
+
+-(void) reconnect{
+    if( self.reconnecting ){
+        return;
+    }
+    
+    if( self.engine != NULL ){
+        [self.engine disconnect:@"manual reconnect"];
+    }
+}
+
+-(void) removeAllHandlers {
+    [self.handlers removeAllObjects];
 }
 
 -(void) tryReconnect:(NSString*) reason{

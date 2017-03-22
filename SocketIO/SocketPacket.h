@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, PacketType) {
 @property (nonatomic, assign) NSInteger id;
 @property (nonatomic, assign) PacketType type;
 
-@property (nonatomic, copy, nullable) NSData *binary;
+@property (nonatomic, copy, nullable) NSArray<NSData*> *binary;
 @property (nonatomic, copy, nullable) NSArray *data;
 @property (nonatomic, copy, nullable) NSArray *args;
 

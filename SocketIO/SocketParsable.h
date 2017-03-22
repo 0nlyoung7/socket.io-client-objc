@@ -3,9 +3,8 @@
 
 @protocol SocketParsable <NSObject>
 
-- (BOOL) isStringEmpty:(NSString *)string;
-
 @optional
+- (BOOL) isStringEmpty:(NSString *)string;
 - (void) parseBinaryData:(NSData*) data;
 - (void) parseSocketMessage:(NSString*) message;
 
