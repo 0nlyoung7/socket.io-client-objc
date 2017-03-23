@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
-
 #import "SocketIOClient.h"
+
+@class SocketIOClient;
 
 @interface SocketAckEmitter : NSObject
 

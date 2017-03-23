@@ -103,6 +103,10 @@ static const size_t  MaxFrameSize        = 32;
     });
 }
 
+- (void)disconnect{
+    [self disconnect:0 closeCode:Normal ];
+}
+
 - (void)disconnect:(NSTimeInterval) forceTimeout closeCode:(UInt16) closeCode  {
     
     if( forceTimeout > 0 ){
@@ -328,7 +332,7 @@ static const size_t  MaxFrameSize        = 32;
             self.fragBuffer = nil;
         }
         if(!self.isConnected) {
-            CFIndex responseStatusCode;
+            //CFIndex responseStatusCode;
              // TODO
             //[self processTCPHandshake:(uint8_t*)work.bytes length:work.length responseStatusCode:&responseStatusCode];
         } else {

@@ -11,6 +11,8 @@
 @property (nonatomic) BOOL waitingForPoll;
 @property (nonatomic) BOOL waitingForPost;
 
+@optional
+
 -(void) doPoll;
 
 -(NSMutableURLRequest* _Nonnull) createRequestForPostWithPostWait;

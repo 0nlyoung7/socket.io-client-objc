@@ -6,7 +6,6 @@
 - (void) engineDidClose:(NSString*) reason;
 - (void) engineDidOpen:(NSString*) reason;
 - (void) parseEngineMessage:(NSString*) _msg;
-
 - (void) parseEngineBinaryData:(NSData*) data;
 
 @end

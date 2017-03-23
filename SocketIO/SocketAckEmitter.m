@@ -14,6 +14,9 @@
 }
 
 -(void) with:(NSArray*) items{
+    if( _ackNum == -1 ){
+        return;
+    }
     [self.socket emitAck:self.ackNum with:items];
 }
 @end

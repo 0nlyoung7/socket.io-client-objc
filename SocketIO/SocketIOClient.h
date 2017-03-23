@@ -8,6 +8,10 @@
 #import "SocketAnyEvent.h"
 #import "SocketEventHandler.h"
 #import "SocketAckManager.h"
+#import "SocketPacket.h"
+#import "SocketEngine.h"
+
+@class SocketEventHandler;
 
 @interface SocketIOClient : NSObject<SocketEngineClient, SocketParsable>
 

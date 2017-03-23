@@ -4,7 +4,6 @@
 #import "SocketTypes.h"
 #import "SocketStringReader.h"
 
-
 @implementation SocketEngine
 {
     

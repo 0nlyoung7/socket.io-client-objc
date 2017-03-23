@@ -3,6 +3,7 @@
 #import "WebSocket.h"
 
 @protocol SocketEngineWebsocket <SocketEngineSpec, WebSocketDelegate>
+@optional
 
 - (void)sendWebSocketMessage:(NSString*) str withType:(SocketEnginePacketType)type withData:(NSArray*) datas;
 

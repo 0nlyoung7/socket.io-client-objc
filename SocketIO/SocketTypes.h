@@ -1,6 +1,10 @@
-#import "SocketPacket.h"
-#import "SocketAckEmitter.h"
+#import <Foundation/Foundation.h>
+
 #import "SocketEnginePacketType.h"
+
+@class SocketIOClient;
+@class SocketAckEmitter;
+@class SocketPacket;
 
 typedef void(^AckCallback)(id _Nullable args );
 

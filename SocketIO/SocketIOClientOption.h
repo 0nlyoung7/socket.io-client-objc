@@ -14,7 +14,7 @@ typedef NS_ENUM(NSInteger, SocketIOClientStatus) {
 
 @property (nonatomic, assign) NSInteger placeholders;
 
-@property (nonatomic, strong)   NSMutableDictionary *connectParams;
+@property (nonatomic, nullable)   NSMutableDictionary *connectParams;
 @property (nonatomic, strong)   NSMutableDictionary *cookies;
 @property (nonatomic, assign) BOOL doubleEncodeUTF8;
 @property (nonatomic, copy)   NSMutableDictionary *extraHeaders;

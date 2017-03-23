@@ -31,14 +31,14 @@
 @property (nonatomic) BOOL probing;
 @property (nonatomic, copy, nullable) NSURLSession *session;
 @property (nonatomic, nullable) NSString *sid;
-@property (nonatomic, nullable) NSString *socketPath;
+@property (nonatomic, nullable, copy) NSString *socketPath;
 @property (nonatomic, nullable) NSURL *urlPolling;
 @property (nonatomic, nullable) NSURL *urlWebSocket;
 @property (nonatomic) BOOL websocket;
 @property (nonatomic, copy, nullable) WebSocket *ws;
 
-@property (nonatomic, weak, nullable) SocketEngineClient *client;
-@property(nonatomic,weak, nullable)id<NSURLSessionDelegate> sessionDelegate;
+@property (nonatomic, nullable) SocketEngineClient *client;
+@property(nonatomic, weak, nullable)id<NSURLSessionDelegate> sessionDelegate;
 
 @property (nonatomic, nullable) NSURL *url;
 

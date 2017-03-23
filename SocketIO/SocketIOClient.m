@@ -1,9 +1,6 @@
 #import <UIKit/UIKit.h>
 
 #import "SocketIOClient.h"
-#import "SocketPacket.h"
-#import "SocketEngine.h"
-
 
 @implementation SocketIOClient
 {

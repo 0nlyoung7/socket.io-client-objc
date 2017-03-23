@@ -7,7 +7,7 @@
 
 @protocol SocketEngineSpec <NSObject>
 
-@property (nonatomic, weak, nullable) SocketEngineClient *client;
+@property (nonatomic, nullable, readwrite, retain) SocketEngineClient *client;
 @property (nonatomic) BOOL closed;
 @property (nonatomic) BOOL connected;
 @property (nonatomic, nullable) NSDictionary *connectParams;
@@ -28,7 +28,7 @@
 @property (nonatomic, strong, nullable) dispatch_queue_t handleQueue;
 
 @property (nonatomic, nullable) NSString *sid;
-@property (nonatomic, nullable) NSString *socketPath;
+@property (nonatomic, nullable, readwrite, copy) NSString *socketPath;
 @property (nonatomic, nullable) NSURL *urlPolling;
 @property (nonatomic, nullable) NSURL *urlWebSocket;
 
@@ -37,11 +37,12 @@
 @property (nonatomic) BOOL websocket;
 @property (nonatomic, copy, nullable) WebSocket *ws;
 
+@optional
+
 -(void) send:(NSString *_Nullable) msg withData:(NSArray *_Nullable) datas;
 
 -(struct BinaryContainer) createBinaryDataForSend:(NSData *_Nullable) data;
 
-@optional
 - (void) connect;
 - (void) didError:(NSString *_Nullable) reason;
 - (void) disconnect:(NSString *_Nullable) reason;

@@ -57,6 +57,8 @@ typedef NS_ENUM(uint16_t, InternalErrorCode) {
 
 - (void)disconnect;
 
+- (void)disconnect:(NSTimeInterval) forceTimeout closeCode:(UInt16) closeCode;
+
 - (void)writeData:(nonnull NSData*)data;
 
 - (void)writeString:(nonnull NSString*)string;
