@@ -122,7 +122,7 @@ static const size_t  MaxFrameSize        = 32;
 - (void)writeString:(NSString*)string {
     if(string) {
         [self dequeueWrite:[string dataUsingEncoding:NSUTF8StringEncoding]
-                  code:TextFrame];
+                  code:OpTextFrame];
     }
 }
 
@@ -131,7 +131,7 @@ static const size_t  MaxFrameSize        = 32;
 }
 
 - (void)writeData:(NSData*)data {
-    [self dequeueWrite:data code:BinaryFrame];
+    [self dequeueWrite:data code:OpBinaryFrame];
 }
 
 - (void) createHTTPRequest {
@@ -332,12 +332,9 @@ static const size_t  MaxFrameSize        = 32;
             self.fragBuffer = nil;
         }
         if(!self.isConnected) {
-            //CFIndex responseStatusCode;
-             // TODO
-            //[self processTCPHandshake:(uint8_t*)work.bytes length:work.length responseStatusCode:&responseStatusCode];
+            [self processTCPHandshake:(uint8_t*)work.bytes length:work.length];
         } else {
-             // TODO
-            //[self processRawMessage:(uint8_t*)work.bytes length:work.length];
+            [self processRawMessage:(uint8_t*)work.bytes length:work.length];
         }
         [self.inputQueue removeObject:data];
     }
@@ -384,16 +381,13 @@ static const size_t  MaxFrameSize        = 32;
             totalSize += 1; //skip the last \n
             NSInteger  restSize = bufferLen-totalSize;
             if(restSize > 0) {
-                // TODO
-                // [self processRawMessage:(buffer+totalSize) length:restSize];
+                [self processRawMessage:(buffer+totalSize) length:restSize];
             }
         }
         return status;
     }
     return NO;
 }
-
-
 
 //Validate the HTTP is a 101, as per the RFC spec.
 - (BOOL)validateResponse:(uint8_t *)buffer length:(NSInteger)bufferLen {
@@ -412,6 +406,169 @@ static const size_t  MaxFrameSize        = 32;
         return YES;
     }
     return NO;
+}
+
+-(void)processRawMessage:(uint8_t*)buffer length:(NSInteger)bufferLen {
+    WSResponse *response = [self.readStack lastObject];
+    if(response && bufferLen < 2) {
+        self.fragBuffer = [NSData dataWithBytes:buffer length:bufferLen];
+        return;
+    }
+    if(response.bytesLeft > 0) {
+        NSInteger len = response.bytesLeft;
+        NSInteger extra =  bufferLen - response.bytesLeft;
+        if(response.bytesLeft > bufferLen) {
+            len = bufferLen;
+            extra = 0;
+        }
+        response.bytesLeft -= len;
+        [response.buffer appendData:[NSData dataWithBytes:buffer length:len]];
+        
+        //TODO
+        //[self processResponse:response];
+        NSInteger offset = bufferLen - extra;
+        if(extra > 0) {
+            //TODO
+            //[self processExtra:(buffer+offset) length:extra];
+        }
+        return;
+    } else {
+        if(bufferLen < 2) { // we need at least 2 bytes for the header
+            self.fragBuffer = [NSData dataWithBytes:buffer length:bufferLen];
+            return;
+        }
+        BOOL isFin = (FinMask & buffer[0]);
+        uint8_t receivedOpcode = (OpCodeMask & buffer[0]);
+        BOOL isMasked = (MaskMask & buffer[1]);
+        uint8_t payloadLen = (PayloadLenMask & buffer[1]);
+        NSInteger offset = 2; //how many bytes do we need to skip for the header
+        if((isMasked  || (RSVMask & buffer[0])) && receivedOpcode != OpPong) {
+            [self doDisconnect:[self errorWithDetail:@"masked and rsv data is not currently supported" code:ProtocolError]];
+            [self writeError:ProtocolError];
+            return;
+        }
+        BOOL isControlFrame = (receivedOpcode == OpConnectionClose || receivedOpcode == OpPing);
+        if(!isControlFrame && (receivedOpcode != OpBinaryFrame && receivedOpcode != OpContinueFrame && receivedOpcode != OpTextFrame && receivedOpcode != OpPong)) {
+            [self doDisconnect:[self errorWithDetail:[NSString stringWithFormat:@"unknown opcode: 0x%x",receivedOpcode] code:ProtocolError]];
+            [self writeError:ProtocolError];
+            return;
+        }
+        if(isControlFrame && !isFin) {
+            [self doDisconnect:[self errorWithDetail:@"control frames can't be fragmented" code:ProtocolError]];
+            [self writeError:ProtocolError];
+            return;
+        }
+        if(receivedOpcode == OpConnectionClose) {
+            //the server disconnected us
+            uint16_t code = Normal;
+            if(payloadLen == 1) {
+                code = ProtocolError;
+            }
+            else if(payloadLen > 1) {
+                code = CFSwapInt16BigToHost(*(uint16_t *)(buffer+offset) );
+                if(code < 1000 || (code > 1003 && code < 1007) || (code > 1011 && code < 3000)) {
+                    code = ProtocolError;
+                }
+                offset += 2;
+            }
+            
+            if(payloadLen > 2) {
+                NSInteger len = payloadLen-2;
+                if(len > 0) {
+                    NSData *data = [NSData dataWithBytes:(buffer+offset) length:len];
+                    NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                    if(!str) {
+                        code = ProtocolError;
+                    }
+                }
+            }
+            [self writeError:code];
+            [self doDisconnect:[self errorWithDetail:@"continue frame before a binary or text frame" code:code]];
+            return;
+        }
+        if(isControlFrame && payloadLen > 125) {
+            [self writeError:ProtocolError];
+            return;
+        }
+        NSInteger dataLength = payloadLen;
+        if(payloadLen == 127) {
+            dataLength = (NSInteger)CFSwapInt64BigToHost(*(uint64_t *)(buffer+offset));
+            offset += sizeof(uint64_t);
+        } else if(payloadLen == 126) {
+            dataLength = CFSwapInt16BigToHost(*(uint16_t *)(buffer+offset) );
+            offset += sizeof(uint16_t);
+        }
+        if(bufferLen < offset) { // we cannot process this yet, nead more header data
+            self.fragBuffer = [NSData dataWithBytes:buffer length:bufferLen];
+            return;
+        }
+        NSInteger len = dataLength;
+        if(dataLength > (bufferLen-offset) || (bufferLen - offset) < dataLength) {
+            len = bufferLen-offset;
+        }
+        NSData *data = nil;
+        if(len < 0) {
+            len = 0;
+            data = [NSData data];
+        } else {
+            data = [NSData dataWithBytes:(buffer+offset) length:len];
+        }
+        if(receivedOpcode == OpPong) {
+            NSInteger step = (offset+len);
+            NSInteger extra = bufferLen-step;
+            if(extra > 0) {
+                [self processRawMessage:(buffer+step) length:extra];
+            }
+            return;
+        }
+        WSResponse *response = [self.readStack lastObject];
+        if(isControlFrame) {
+            response = nil; //don't append pings
+        }
+        if(!isFin && receivedOpcode == OpContinueFrame && !response) {
+            [self doDisconnect:[self errorWithDetail:@"continue frame before a binary or text frame" code:ProtocolError]];
+            [self writeError:ProtocolError];
+            return;
+        }
+        BOOL isNew = NO;
+        if(!response) {
+            if(receivedOpcode == OpContinueFrame) {
+                [self doDisconnect:[self errorWithDetail:@"first frame can't be a continue frame" code:ProtocolError]];
+                [self writeError:ProtocolError];
+                return;
+            }
+            isNew = YES;
+            response = [WSResponse new];
+            response.code = receivedOpcode;
+            response.bytesLeft = dataLength;
+            response.buffer = [NSMutableData dataWithData:data];
+        } else {
+            if(receivedOpcode == OpContinueFrame) {
+                response.bytesLeft = dataLength;
+            } else {
+                [self doDisconnect:[self errorWithDetail:@"second and beyond of fragment message must be a continue frame" code:ProtocolError]];
+                [self writeError:ProtocolError];
+                return;
+            }
+            [response.buffer appendData:data];
+        }
+        response.bytesLeft -= len;
+        response.frameCount++;
+        response.isFin = isFin;
+        if(isNew) {
+            [self.readStack addObject:response];
+        }
+        
+        //TODO
+        //[self processResponse:response];
+        
+        NSInteger step = (offset+len);
+        NSInteger extra = bufferLen-step;
+        if(extra > 0) {
+            //TODO
+            //[self processExtra:(buffer+step) length:extra];
+        }
+    }
 }
 
 -(void)dequeueWrite:(NSData*)data code:(OpCode)code {
@@ -520,7 +677,7 @@ static const size_t  MaxFrameSize        = 32;
 - (void)writeError:(uint16_t)code {
     uint16_t buffer[1];
     buffer[0] = CFSwapInt16BigToHost(code);
-    [self dequeueWrite:[NSData dataWithBytes:buffer length:sizeof(uint16_t)] code:ConnectionClose];
+    [self dequeueWrite:[NSData dataWithBytes:buffer length:sizeof(uint16_t)] code:OpConnectionClose];
 }
 
 - (void)dealloc {
