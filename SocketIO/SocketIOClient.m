@@ -279,7 +279,6 @@
 -(NSUUID*) on:(NSString*) event callback:(NormalCallback) callback {
     
     SocketEventHandler *handler = [[SocketEventHandler alloc] init];
-    //TODO init handler
     handler.event = event;
     handler.uuid = [NSUUID init];
     handler.callback = callback;
@@ -292,7 +291,6 @@
     NSUUID *uuid = [NSUUID init];
     
     SocketEventHandler *handler = [[SocketEventHandler alloc] init];
-    //TODO init handler
     handler.event = event;
     handler.uuid = uuid;
     
@@ -363,8 +361,7 @@
     [self handleEvent:@"reconnectAttempt" data:data isInternalMessage:TRUE];
     
     self.currentReconnectAttempt += 1;
-    
-    //TODO connect
+    [self connect];
     
     CGFloat deadlinePlus = (CGFloat) (self.reconnectWait * NSEC_PER_SEC) / NSEC_PER_SEC;
     

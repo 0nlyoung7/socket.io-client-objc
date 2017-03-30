@@ -22,9 +22,9 @@
     
 typedef NS_ENUM(uint8_t, OpCode) {
     OpContinueFrame = 0x0,
-    TextFrame = 0x1,
-    BinaryFrame = 0x2,
-    ConnectionClose = 0x8,
+    OpTextFrame = 0x1,
+    OpBinaryFrame = 0x2,
+    OpConnectionClose = 0x8,
     OpPing = 0x8,
     OpPong = 0xA
 };
