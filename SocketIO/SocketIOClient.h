@@ -46,6 +46,8 @@
 @property(nonatomic, strong, nullable)dispatch_queue_t handleQueue;
 @property(nonatomic) int reconnectAttempts;
 
+- (void) _emit:(NSArray*) data ack:(NSInteger)ack;
+
 - (void)emitAck:(int)ack with:(nullable NSArray*) items;
 
 @end

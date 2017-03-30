@@ -10,8 +10,6 @@ typedef void(^AckCallback)(id _Nullable args );
 
 typedef void(^NormalCallback)(id _Nullable args, SocketAckEmitter *_Nullable ackEmitter);
 
-typedef void(^OnAckCallback)(int timeoutAfter, AckCallback _Nullable callback);
-
 
 @interface Probe : NSObject
 

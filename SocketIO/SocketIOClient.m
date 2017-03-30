@@ -4,7 +4,7 @@
 
 @implementation SocketIOClient
 {
-        
+    dispatch_semaphore_t _semaphore;
 }
 
 - (instancetype)initWithSocketURL:(NSURL *)url config:(NSMutableDictionary*)config
@@ -34,7 +34,7 @@
            }
         }
         
-        
+        _semaphore = dispatch_semaphore_create(1);
         
         [self.config setObject:[NSNumber numberWithBool:YES] forKey:@"secure"];
     }
@@ -94,29 +94,16 @@
 
 }
 
-- (OnAckCallback) createOnAck:(NSArray*) items {
+-(int) nextAck {
+    dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER );
     self.currentAck += 1;
+    dispatch_semaphore_signal( _semaphore );
+    return self.currentAck;
+}
 
-    __weak typeof(self) weakSelf = self;
-
-    int ack = self.currentAck;
-    OnAckCallback cb = ^(int timeout, AckCallback callback) {
-        dispatch_sync(weakSelf.ackQueue, ^{
-            [weakSelf.ackHandlers addAck:ack callback:callback];
-        });
-        
-        [self _emit:items ack:ack];
-        
-        if( timeout != 0 ){
-            
-            CGFloat deadlinePlus = (CGFloat) (timeout * NSEC_PER_SEC) / NSEC_PER_SEC;
-
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, deadlinePlus), weakSelf.handleQueue, ^{
-                [weakSelf.ackHandlers timeoutAck:ack onQueue:self.handleQueue];
-            });
-        }
-    };
-    
+- (OnAckCallback*) createOnAck:(NSArray*) items {
+    int currentAck = [self nextAck];
+    OnAckCallback *cb = [[OnAckCallback alloc] initWithSocket:currentAck items:items socket:self];
     return cb;
 }
 
@@ -160,7 +147,7 @@
     [self _emit:dataArray ack:-1];
 }
 
--(OnAckCallback) emitWithAck:(NSString*) event items:(NSArray*) items {
+-(OnAckCallback*) emitWithAck:(NSString*) event items:(NSArray*) items {
     NSMutableArray *dataArray = [[NSMutableArray alloc] initWithObjects:event, nil];
     [dataArray arrayByAddingObjectsFromArray:items];
     return [self createOnAck:dataArray];
