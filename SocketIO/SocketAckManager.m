@@ -33,7 +33,6 @@
 
 @implementation SocketAckManager
 {
-    
 }
 
 -(instancetype) init{
@@ -55,7 +54,6 @@
     NSString *key =  [NSString stringWithFormat:@"%d",ack];
     SocketAck *socketAck = self.acks[key];
     
-    
     dispatch_async(onQueue ,^{
         if( socketAck != NULL ){
             socketAck.callback(items);
@@ -72,9 +70,7 @@
     
     dispatch_async(onQueue ,^{
         if( socketAck != NULL ){
-            NSArray *response = @[@"NO ACK"];
-            socketAck.callback(response);
-            
+            socketAck.callback(  @[@"NO ACK"] );
             [self.acks removeObjectForKey:key];
         }
     });

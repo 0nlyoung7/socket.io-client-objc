@@ -20,15 +20,48 @@
 }
 
 -(instancetype) initWithOption:(SocketEngineClient*) client url:(NSURL*) url config:(NSMutableDictionary*) config {
+    
     self = [[SocketEngine alloc] init];
+    _socketPath = @"/engine.io/";
+    
     self.client = client;
     self.url = url;
     
     for( NSString* key in config ){
-        if(  [config[key] isEqual:@"ConnectParams"] ){
-       
+        if( [key isEqual:@"connectParams"] ){
+            _connectParams = config[key];
+        } else if( [key isEqual:@"cookies"] ){
+            _cookies = config[key];
+        } else if( [key isEqual:@"doubleEncodeUTF8"] ){
+            _doubleEncodeUTF8 = config[key];
+        } else if( [key isEqual:@"extraHeaders"] ){
+            _extraHeaders = config[key];
+        } else if( [key isEqual:@"sessionDelegate"] ){
+            _sessionDelegate = config[key];
+        } else if( [key isEqual:@"forcePolling"] ){
+            _forcePolling = config[key];
+        } else if( [key isEqual:@"forceWebsockets"] ){
+            _forceWebsockets = config[key];
+        } else if( [key isEqual:@"path"] ){
+            _socketPath = config[key];
+            
+            if( [_socketPath hasSuffix:@"/"] ){
+                [_socketPath stringByAppendingString:@"/"];
+            }
+        } else if( [key isEqual:@"voipEnabled"] ){
+            _voipEnabled = config[key];
+        } else if( [key isEqual:@"secure"] ){
+            _secure = config[key];
+        } else if( [key isEqual:@"selfSigned"] ){
+            _selfSigned = config[key];
+        } else if( [key isEqual:@"security"] ){
+            _security = config[key];
         }
     }
+    
+    self.sessionDelegate = self;
+    
+    [self createURLs];
     
     return self;
 }
@@ -48,6 +81,7 @@
 
 
 - (void) handleBase64:(NSString*) message{
+    //썌얘
     // binary in base64 string
     /**
     let noPrefix = message[message.index(message.startIndex, offsetBy: 2)..<message.endIndex]
@@ -103,6 +137,47 @@
     
     [self doLongPoll:reqPolling];
     
+}
+
+- (void) createURLs {
+    if( self.client == NULL ){
+        self.urlPolling = [NSURL URLWithString:@"http://localhost/"];
+        self.urlWebSocket = [NSURL URLWithString:@"http://localhost/"];
+        return;
+    }
+
+    NSURLComponents *urlPolling = [[NSURLComponents alloc] initWithURL:self.url resolvingAgainstBaseURL:false];
+    NSURLComponents *urlWebSocket = [[NSURLComponents alloc] initWithURL:self.url resolvingAgainstBaseURL:false];
+    
+    NSString *queryString = @"";
+    
+    urlWebSocket.path = _socketPath;
+    urlPolling.path = _socketPath;
+    
+    if( _secure ){
+        urlPolling.scheme = @"https";
+        urlWebSocket.scheme = @"wss";
+    } else {
+        urlPolling.scheme = @"http";
+        urlWebSocket.scheme = @"ws";
+    }
+    
+    if( _connectParams != NULL ){
+        for( NSString* key in _connectParams ){
+            NSString *keyEsc = [key stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+            
+            NSString *tmp = [NSString stringWithFormat:@"(%@)",_connectParams[key] ];
+            NSString *valueEsc = [tmp stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+            
+            queryString = [NSString stringWithFormat:@"&(%@)=(%@)", keyEsc, valueEsc];
+        }
+    }
+    
+    urlWebSocket.percentEncodedQuery = [@"transport=websocket" stringByAppendingString:queryString];
+    urlPolling.percentEncodedQuery = [@"transport=polling&b64=1" stringByAppendingString:queryString];
+    
+    self.urlPolling = urlPolling.URL;
+    self.urlWebSocket = urlWebSocket.URL;
 }
 
 -(void) createWebsocketAndConnect {

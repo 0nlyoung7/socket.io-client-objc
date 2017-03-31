@@ -11,7 +11,6 @@
 @property (nonatomic, strong, nullable) dispatch_queue_t handleQueue;
 @property (nonatomic, strong, nullable) dispatch_queue_t parseQueue;
 
-
 @property (nonatomic, nullable) NSDictionary *connectParams;
 
 @property (nonatomic, copy, nullable) NSMutableArray<NSString*> *postWait;

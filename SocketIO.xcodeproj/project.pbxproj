@@ -67,7 +67,7 @@
 		1A932F7D1E6A99D100DD688D /* SocketAckManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketAckManager.h; sourceTree = "<group>"; };
 		1A932F7E1E6A9A5E00DD688D /* SocketAckManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketAckManager.m; sourceTree = "<group>"; };
 		1A932FB81E6BE38D00DD688D /* SocketAnyEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketAnyEvent.h; sourceTree = "<group>"; };
-		1A932FB91E6BE42D00DD688D /* SocketAnyEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SocketAnyEvent.m; path = ../SocketAnyEvent.m; sourceTree = "<group>"; };
+		1A932FB91E6BE42D00DD688D /* SocketAnyEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketAnyEvent.m; sourceTree = "<group>"; };
 		1AAE56581E63FD1800CC9490 /* SocketEnginePollable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketEnginePollable.h; sourceTree = "<group>"; };
 		1AAE56591E64165300CC9490 /* SocketEnginePollable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketEnginePollable.m; sourceTree = "<group>"; };
 		1AB28CCF1E421F0B00471CD1 /* libSocketIO.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSocketIO.a; sourceTree = BUILT_PRODUCTS_DIR; };

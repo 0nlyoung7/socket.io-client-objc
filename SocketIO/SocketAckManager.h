@@ -10,7 +10,7 @@
 
 @interface SocketAckManager : NSObject
 
-@property (nonatomic, copy, nullable) NSMutableDictionary* acks ;
+@property (nonatomic, copy, nullable) NSMutableDictionary* acks;
 
 -(void) addAck:(int) ack callback:(AckCallback _Nullable) callback;
 
