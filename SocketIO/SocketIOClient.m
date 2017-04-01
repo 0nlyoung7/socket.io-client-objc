@@ -230,7 +230,7 @@
     
     dispatch_async(self.handleQueue ,^{
         if( self.anyHandler ){
-            SocketAnyEvent *socketAnyEvent = [[SocketAnyEvent alloc] init:event items:data];
+            SocketAnyEvent *socketAnyEvent = [[SocketAnyEvent alloc] initWithEvent:event items:data];
             self.anyHandler(socketAnyEvent);
             
             for( SocketEventHandler *handler in self.handlers ){

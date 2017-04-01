@@ -15,6 +15,7 @@
 
 @interface SSLSecurity : NSObject
 
+@property(nonatomic)BOOL validatedDN;
 @property(nonatomic)BOOL isReady; //is the key processing done?
 @property(nonatomic, strong)NSMutableArray *certificates;
 @property(nonatomic, strong)NSMutableArray *pubKeys;
@@ -23,8 +24,6 @@
 - (instancetype)initWithCerts:(NSArray<SSLCert*>*)certs publicKeys:(BOOL)publicKeys;
 
 - (instancetype)initUsingPublicKeys:(BOOL)publicKeys;
-
-@property(nonatomic)BOOL validatedDN;
 
 - (BOOL)isValid:(SecTrustRef)trust domain:(NSString*)domain;
 
