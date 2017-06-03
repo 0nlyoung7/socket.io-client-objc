@@ -170,6 +170,9 @@
 		1AB28CC71E421F0B00471CD1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					New,
+				);
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = james;
 				TargetAttributes = {
