@@ -9,6 +9,26 @@
 /* Begin PBXBuildFile section */
 		1A0105081E60166F00D6ED5D /* SocketAckEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0105071E60166F00D6ED5D /* SocketAckEmitter.m */; };
 		1A164DDA1EE2900D00D18E85 /* SocketAnyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164DD91EE2900D00D18E85 /* SocketAnyEvent.m */; };
+		1A164E231EE2936700D18E85 /* SocketAckEmitter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A523B581E4E937A009D689F /* SocketAckEmitter.h */; };
+		1A164E241EE2936700D18E85 /* SocketAckManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A932F7D1E6A99D100DD688D /* SocketAckManager.h */; };
+		1A164E251EE2936700D18E85 /* SocketAnyEvent.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A932FB81E6BE38D00DD688D /* SocketAnyEvent.h */; };
+		1A164E261EE2936700D18E85 /* SocketEngine.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A19F7731E6E7332006E6BB3 /* SocketEngine.h */; };
+		1A164E271EE2936700D18E85 /* SocketEngineClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A523B071E46C5E2009D689F /* SocketEngineClient.h */; };
+		1A164E281EE2936700D18E85 /* SocketEnginePacketType.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A523B5A1E4E9AEB009D689F /* SocketEnginePacketType.h */; };
+		1A164E291EE2936700D18E85 /* SocketEnginePollable.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1AAE56581E63FD1800CC9490 /* SocketEnginePollable.h */; };
+		1A164E2A1EE2936700D18E85 /* SocketEngineSpec.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A523B591E4E9932009D689F /* SocketEngineSpec.h */; };
+		1A164E2B1EE2936700D18E85 /* SocketEngineWebsocket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A19F7741E6E754E006E6BB3 /* SocketEngineWebsocket.h */; };
+		1A164E2C1EE2936700D18E85 /* SocketEventHandler.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A924F841E7D1B500047B8E7 /* SocketEventHandler.h */; };
+		1A164E2D1EE2936700D18E85 /* SocketIOClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A523B041E46C406009D689F /* SocketIOClient.h */; };
+		1A164E2E1EE2936700D18E85 /* SocketIOClientSpec.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A523B081E46C74F009D689F /* SocketIOClientSpec.h */; };
+		1A164E2F1EE2936700D18E85 /* SocketIOClientStatus.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A523B7D1E4FFD81009D689F /* SocketIOClientStatus.h */; };
+		1A164E301EE2936700D18E85 /* SocketPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1AB28CDD1E42210F00471CD1 /* SocketPacket.h */; };
+		1A164E311EE2936700D18E85 /* SocketParsable.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A523B0B1E46CA71009D689F /* SocketParsable.h */; };
+		1A164E321EE2936700D18E85 /* SocketStringReader.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A5729FB1E49AE360089FE80 /* SocketStringReader.h */; };
+		1A164E331EE2936700D18E85 /* SocketTypes.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A5729FA1E49ABB10089FE80 /* SocketTypes.h */; };
+		1A164E341EE2936700D18E85 /* SocketIOClientOption.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A572A271E4C60130089FE80 /* SocketIOClientOption.h */; };
+		1A164E351EE2936700D18E85 /* SSLSecurity.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A572A4A1E4D5D7F0089FE80 /* SSLSecurity.h */; };
+		1A164E361EE2936700D18E85 /* WebSocket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A572A621E53D80D0089FE80 /* WebSocket.h */; };
 		1A19F7761E6E8391006E6BB3 /* SocketEngineWebsocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A19F7751E6E8391006E6BB3 /* SocketEngineWebsocket.m */; };
 		1A19F7781E6FF8E9006E6BB3 /* SocketEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A19F7771E6FF8E9006E6BB3 /* SocketEngine.m */; };
 		1A523B061E46C42E009D689F /* SocketIOClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A523B051E46C42E009D689F /* SocketIOClient.m */; };
@@ -31,6 +51,26 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				1A164E231EE2936700D18E85 /* SocketAckEmitter.h in CopyFiles */,
+				1A164E241EE2936700D18E85 /* SocketAckManager.h in CopyFiles */,
+				1A164E251EE2936700D18E85 /* SocketAnyEvent.h in CopyFiles */,
+				1A164E261EE2936700D18E85 /* SocketEngine.h in CopyFiles */,
+				1A164E271EE2936700D18E85 /* SocketEngineClient.h in CopyFiles */,
+				1A164E281EE2936700D18E85 /* SocketEnginePacketType.h in CopyFiles */,
+				1A164E291EE2936700D18E85 /* SocketEnginePollable.h in CopyFiles */,
+				1A164E2A1EE2936700D18E85 /* SocketEngineSpec.h in CopyFiles */,
+				1A164E2B1EE2936700D18E85 /* SocketEngineWebsocket.h in CopyFiles */,
+				1A164E2C1EE2936700D18E85 /* SocketEventHandler.h in CopyFiles */,
+				1A164E2D1EE2936700D18E85 /* SocketIOClient.h in CopyFiles */,
+				1A164E2E1EE2936700D18E85 /* SocketIOClientSpec.h in CopyFiles */,
+				1A164E2F1EE2936700D18E85 /* SocketIOClientStatus.h in CopyFiles */,
+				1A164E301EE2936700D18E85 /* SocketPacket.h in CopyFiles */,
+				1A164E311EE2936700D18E85 /* SocketParsable.h in CopyFiles */,
+				1A164E321EE2936700D18E85 /* SocketStringReader.h in CopyFiles */,
+				1A164E331EE2936700D18E85 /* SocketTypes.h in CopyFiles */,
+				1A164E341EE2936700D18E85 /* SocketIOClientOption.h in CopyFiles */,
+				1A164E351EE2936700D18E85 /* SSLSecurity.h in CopyFiles */,
+				1A164E361EE2936700D18E85 /* WebSocket.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,18 +358,35 @@
 		1AB28CD91E421F0B00471CD1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)/include/*.*",
+					"$(BUILT_PRODUCTS_DIR)/usr/local/include/**",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s i386";
 			};
 			name = Debug;
 		};
 		1AB28CDA1E421F0B00471CD1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)/include/*.*",
+					"$(BUILT_PRODUCTS_DIR)/usr/local/include/**",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s i386";
 			};
 			name = Release;
 		};

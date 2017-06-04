@@ -4,6 +4,11 @@
 #import "SocketTypes.h"
 #import "SocketStringReader.h"
 
+@implementation Probe
+{
+}
+@end
+
 @implementation SocketEngine
 {
     

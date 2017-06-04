@@ -7,7 +7,7 @@
     dispatch_semaphore_t _semaphore;
 }
 
-- (instancetype)initWithSocketURL:(NSURL *)url config:(NSMutableDictionary*)config
+- (instancetype)initWithSocketURL:(NSURL *)url config:(NSDictionary*)config
 {
     self = [super init];
     if (self) {
@@ -20,7 +20,7 @@
         self.reconnectAttempts = -1;
         
         self.socketURL = url;
-        self.config = config;
+        self.config = [config mutableCopy];
         
         if( [[url absoluteString] hasPrefix:@"https://"] ){
             [self.config setObject:[NSNumber numberWithBool:YES] forKey:@"secure"];
@@ -35,8 +35,6 @@
         }
         
         _semaphore = dispatch_semaphore_create(1);
-        
-        [self.config setObject:[NSNumber numberWithBool:YES] forKey:@"secure"];
     }
     return self;
 }

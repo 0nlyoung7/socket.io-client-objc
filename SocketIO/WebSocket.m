@@ -62,6 +62,12 @@ static const size_t  MaxFrameSize        = 32;
 
 #define kHttpSwitchProtocolCode 101
 
+
+@implementation WSResponse
+{
+}
+@end
+
 @implementation WebSocket
 {
 }
