@@ -46,7 +46,13 @@
 @property(nonatomic, strong, nullable)dispatch_queue_t handleQueue;
 @property(nonatomic) int reconnectAttempts;
 
-- (instancetype)initWithSocketURL:(NSURL *_Nonnull)url config:(NSDictionary *_Nonnull)config;
+- (_Nonnull instancetype) initWithSocketURL:(NSURL *_Nonnull)url config:(NSDictionary *_Nonnull)config;
+
+- (NSUUID *_Nonnull ) on:(NSString *_Nonnull) event callback:(_Nullable NormalCallback) callback;
+
+- (void) connect;
+
+- (void) connect:(int) timeoutAfter withHandler:(void (^)(void))handler;
 
 - (void) _emit:(nonnull NSArray*) data ack:(NSInteger)ack;
 

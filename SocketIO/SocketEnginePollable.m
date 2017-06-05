@@ -66,6 +66,7 @@
     }
 }
 
+#pragma mark SocketEnginePollable
 -(void) doRequest:(NSMutableURLRequest*) req callbackWith:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)) callback{
     
     if( !self.polling || self.closed || self.invalidated || self.fastUpgrade ) {
@@ -78,12 +79,14 @@
     
 }
 
+#pragma mark SocketEnginePollable
 -(void) doLongPoll:(NSMutableURLRequest*) req {
     
     __weak typeof(self) weakSelf = self;
     
     [self doRequest:req
        callbackWith:^(NSData *data, NSURLResponse *res, NSError *err) {
+           
            if( !weakSelf.polling ){
                return;
            }

@@ -57,4 +57,6 @@
 @property (nonatomic) BOOL selfSigned;
 @property (nonatomic) BOOL voipEnabled;
 
+-(instancetype) initWithOption:(SocketEngineClient*) client url:(NSURL*) url config:(NSMutableDictionary*) config;
+
 @end

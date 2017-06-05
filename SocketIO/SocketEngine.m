@@ -26,9 +26,9 @@
 
 -(instancetype) initWithOption:(SocketEngineClient*) client url:(NSURL*) url config:(NSMutableDictionary*) config {
     
-    self = [[SocketEngine alloc] init];
+    self = [super init];
     _socketPath = @"/engine.io/";
-    
+ 
     self.client = client;
     self.url = url;
     
@@ -65,7 +65,6 @@
     }
     
     self.sessionDelegate = self;
-    
     [self createURLs];
     
     return self;
@@ -116,7 +115,7 @@
     if( self.connected ){
         [self disconnect:@"reconnet"];
     }
-    
+
     [self resetEngine];
     
     if( self.forceWebsockets ){
@@ -128,6 +127,7 @@
     }
     
     NSMutableURLRequest *reqPolling = [[NSMutableURLRequest alloc] initWithURL:self.urlPollingWithSid];
+
     
     if( self.cookies != NULL ){
         NSDictionary<NSString *, NSString *> *headers = [NSHTTPCookie requestHeaderFieldsWithCookies:self.cookies];
@@ -139,7 +139,7 @@
             [reqPolling setValue:self.extraHeaders[headerName] forHTTPHeaderField:headerName];
         }
     }
-    
+
     [self doLongPoll:reqPolling];
     
 }

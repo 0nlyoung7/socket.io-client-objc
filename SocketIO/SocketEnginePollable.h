@@ -21,20 +21,9 @@
 
 -(void) doRequest:(NSMutableURLRequest* _Nullable) req callbackWith:(void ( ^ _Nullable )(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)) callback;
 
--(void) doLongPoll:(NSMutableURLRequest* _Nullable) req;
+-(void) doLongPoll:(NSMutableURLRequest* _Nonnull) req;
 
 @end
 
 @interface SocketEnginePollable : NSObject <SocketEngineSpec, SocketEnginePollable>
-
--(void) addHeader:(NSMutableURLRequest* _Nonnull) req;
-
--(NSMutableURLRequest* _Nonnull) createRequestForPostWithPostWait;
-
--(void) doPoll;
-
--(void) doRequest:(NSMutableURLRequest* _Nullable) req callbackWith:(void ( ^ _Nullable )(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)) callback;
-
--(void) doLongPoll:(NSMutableURLRequest* _Nullable) req;
-
 @end

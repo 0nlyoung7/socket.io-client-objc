@@ -40,12 +40,12 @@
 }
 
 - (SocketEngine*) addEngine{
-    SocketEngine *engine = [[SocketEngine alloc] init];
+    SocketEngine *engine = [[SocketEngine alloc] initWithOption:self url:self.socketURL config:self.config];
     return engine;
 }
 
-- (void) connect {
-   // [self connect:0 withHandler:NULL];
+- (void) connect{
+    [self connect:0 withHandler:NULL];
 }
 
 - (void) connect:(int) timeoutAfter withHandler:(void (^)(void))handler {
@@ -278,7 +278,7 @@
     
     SocketEventHandler *handler = [[SocketEventHandler alloc] init];
     handler.event = event;
-    handler.uuid = [NSUUID init];
+    handler.uuid = [NSUUID UUID];
     handler.callback = callback;
     
     [self.handlers addObject:handler];
